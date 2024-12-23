@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -148,6 +149,32 @@ public class GlobalExceptionHandler {
                 .build();
 
         return ResponseEntity.status(status).body(response);
+    }
+
+    /**
+     * Handles {@link BadCredentialsException} thrown during authentication.
+     *
+     * <p>This method intercepts {@link BadCredentialsException} and returns a response indicating
+     * that the provided username or password is invalid. </p>
+     *
+     * @param e the {@link BadCredentialsException} thrown during authentication
+     * @return a {@link ResponseEntity} containing an {@link ApiResponse} with an error message and
+     *     status code 401 (UNAUTHORIZED)
+     */
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ApiResponse<Void>> handleBadCredentials(BadCredentialsException e) {
+
+        logger.error("Bad Credentials Error: {}", e.getMessage());
+
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+        ApiResponse<Void> response = ErrorResponse.<Void>builder()
+                .code(status.value())
+                .message(e.getMessage())
+                .errorCode(ErrorCode.UNAUTHORIZED)
+                .build();
+
+        return ResponseEntity.status(status).body(response);
+
     }
 
     /**

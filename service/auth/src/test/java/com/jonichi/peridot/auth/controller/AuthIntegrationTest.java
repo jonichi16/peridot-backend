@@ -1,8 +1,10 @@
 package com.jonichi.peridot.auth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jonichi.peridot.auth.config.SecurityConfig;
 import com.jonichi.peridot.auth.dto.AuthenticateRequestDTO;
 import com.jonichi.peridot.auth.dto.RegisterRequestDTO;
+import com.jonichi.peridot.auth.repository.UserRepository;
 import com.jonichi.peridot.auth.service.AuthService;
 import com.jonichi.peridot.common.exception.PeridotDuplicateException;
 import org.junit.jupiter.api.Test;
@@ -10,16 +12,21 @@ import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
+@Import(SecurityConfig.class)
 public class AuthIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
+    @MockBean
+    private UserRepository userRepository;
     @MockBean
     private AuthService authService;
 
@@ -110,25 +117,25 @@ public class AuthIntegrationTest {
                 .andExpect(status().isInternalServerError());
     }
 
-//    @Test
-//    public void authenticate_withWrongCredentials_shouldReturn401UnauthorizedError() throws Exception {
-//        // given
-//        String username = "test";
-//        String password = "secret";
-//
-//        AuthenticateRequestDTO authenticateRequestDTO = new AuthenticateRequestDTO(username, password);
-//
-//        // when
-//        when(authUseCase.authenticate(username, password)).thenThrow(
-//                new BadCredentialsException("Bad credentials")
-//        );
-//
-//        // then
-//        mockMvc.perform(post("/api/v1/auth/authenticate")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(objectMapper.writeValueAsString(authenticateRequestDTO)))
-//                .andExpect(status().isUnauthorized());
-//    }
+    @Test
+    public void authenticate_withWrongCredentials_shouldReturn401UnauthorizedError() throws Exception {
+        // given
+        String username = "test";
+        String password = "secret";
+
+        AuthenticateRequestDTO authenticateRequestDTO = new AuthenticateRequestDTO(username, password);
+
+        // when
+        when(authService.authenticate(username, password)).thenThrow(
+                new BadCredentialsException("Bad credentials")
+        );
+
+        // then
+        mockMvc.perform(post("/api/auth/authenticate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(authenticateRequestDTO)))
+                .andExpect(status().isUnauthorized());
+    }
 
     @Test
     public void authenticate_shouldReturn20OK() throws Exception {

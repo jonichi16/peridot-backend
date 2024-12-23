@@ -22,4 +22,8 @@ public interface JwtService {
      * @return a JWT token representing the authenticated user
      */
     String generateToken(UserDetails user);
+
+    String extractUsername(String token);
+
+    boolean isTokenValid(String token, UserDetails userDetails);
 }
