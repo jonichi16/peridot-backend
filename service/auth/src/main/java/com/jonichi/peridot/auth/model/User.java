@@ -39,8 +39,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 @AllArgsConstructor
 @Entity
 @Table(name = "_user", uniqueConstraints = {
-        @UniqueConstraint(name = "user_username_unique", columnNames = "username"),
-        @UniqueConstraint(name = "user_email_unique", columnNames = "email")
+    @UniqueConstraint(name = "user_username_unique", columnNames = "username"),
+    @UniqueConstraint(name = "user_email_unique", columnNames = "email")
 })
 public class User implements UserDetails {
 
