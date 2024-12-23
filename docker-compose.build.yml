@@ -1,0 +1,20 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: peridot:latest
+    container_name: api
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - backend
+    environment:
+      - DB_URL=jdbc:postgresql://db:5432/${DB_DATABASE}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - ENVELOPE_ENV=${ENVELOPE_ENV}
+      - JWT_SECRET=${JWT_SECRET}
+    ports:
+      - "8080:8080"
