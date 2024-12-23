@@ -1,6 +1,7 @@
 package com.jonichi.peridot.auth.controller;
 
 import com.jonichi.peridot.auth.dto.AuthTokenDTO;
+import com.jonichi.peridot.auth.dto.AuthenticateRequestDTO;
 import com.jonichi.peridot.auth.dto.RegisterRequestDTO;
 import com.jonichi.peridot.auth.service.AuthService;
 import com.jonichi.peridot.common.dto.ApiResponse;
@@ -67,6 +68,44 @@ public class AuthController {
                 .build();
 
         logger.info("End - Controller - register");
+        return ResponseEntity.status(status).body(response);
+    }
+
+    /**
+     * Endpoint for authenticating a user and generating an authentication accessToken.
+     *
+     * <p>This method receives a request with the user's username and password, authenticates the
+     * user, and returns a JWT accessToken on successful authentication. The accessToken can then
+     * be used for subsequent requests that require authentication.</p>
+     *
+     * @param authenticateRequestDTO the request data containing the user's username and password
+     * @return a {@link ResponseEntity} containing a {@link ApiResponse} with the authentication
+     *     accessToken
+     */
+    @PostMapping("/authenticate")
+    public ResponseEntity<ApiResponse<AuthTokenDTO>> authenticate(
+            @RequestBody @Valid AuthenticateRequestDTO authenticateRequestDTO
+    ) {
+        logger.info("Start - Controller - authenticate");
+        logger.debug(
+                "Request: username={}, password={}",
+                authenticateRequestDTO.username(),
+                "******"
+        );
+
+        AuthTokenDTO authTokenDTO = authService.authenticate(
+                authenticateRequestDTO.username(),
+                authenticateRequestDTO.password()
+        );
+
+        HttpStatus status = HttpStatus.OK;
+        ApiResponse<AuthTokenDTO> response = SuccessResponse.<AuthTokenDTO>builder()
+                .code(status.value())
+                .message("User authenticated successfully")
+                .data(authTokenDTO)
+                .build();
+
+        logger.info("End - Controller - authenticate");
         return ResponseEntity.status(status).body(response);
     }
 

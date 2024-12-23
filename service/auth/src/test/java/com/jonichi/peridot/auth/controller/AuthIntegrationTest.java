@@ -1,6 +1,7 @@
 package com.jonichi.peridot.auth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jonichi.peridot.auth.dto.AuthenticateRequestDTO;
 import com.jonichi.peridot.auth.dto.RegisterRequestDTO;
 import com.jonichi.peridot.auth.service.AuthService;
 import com.jonichi.peridot.common.exception.PeridotDuplicateException;
@@ -106,6 +107,70 @@ public class AuthIntegrationTest {
         mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(registerRequestDTO)))
+                .andExpect(status().isInternalServerError());
+    }
+
+//    @Test
+//    public void authenticate_withWrongCredentials_shouldReturn401UnauthorizedError() throws Exception {
+//        // given
+//        String username = "test";
+//        String password = "secret";
+//
+//        AuthenticateRequestDTO authenticateRequestDTO = new AuthenticateRequestDTO(username, password);
+//
+//        // when
+//        when(authUseCase.authenticate(username, password)).thenThrow(
+//                new BadCredentialsException("Bad credentials")
+//        );
+//
+//        // then
+//        mockMvc.perform(post("/api/v1/auth/authenticate")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(objectMapper.writeValueAsString(authenticateRequestDTO)))
+//                .andExpect(status().isUnauthorized());
+//    }
+
+    @Test
+    public void authenticate_shouldReturn20OK() throws Exception {
+        String username = "test";
+        String password = "secret";
+
+        AuthenticateRequestDTO authenticateRequestDTO = new AuthenticateRequestDTO(username, password);
+
+        mockMvc.perform(post("/api/auth/authenticate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(authenticateRequestDTO)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void authenticate_withMissingFields_shouldReturn400BadRequestError() throws Exception {
+        // given
+        String invalidRequest = "{ }";
+
+        // when, then
+        mockMvc.perform(post("/api/auth/authenticate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(invalidRequest))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void authenticate_withError_shouldReturn500InternalServerError() throws Exception {
+        // given
+        String username = "test";
+        String password = "secret";
+
+        // when
+        when(authService.authenticate(username, password)).thenThrow(
+                new RuntimeException("Something went wrong")
+        );
+        AuthenticateRequestDTO authenticateRequestDTO = new AuthenticateRequestDTO(username, password);
+
+        // then
+        mockMvc.perform(post("/api/auth/authenticate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(authenticateRequestDTO)))
                 .andExpect(status().isInternalServerError());
     }
 
