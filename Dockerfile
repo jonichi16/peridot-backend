@@ -2,6 +2,8 @@ FROM maven:3.9.4-eclipse-temurin-21-alpine AS builder
 WORKDIR /app
 COPY pom.xml .
 COPY service/core/pom.xml ./service/core/pom.xml
+COPY lib/common/pom.xml ./lib/common/pom.xml
+COPY service/auth/pom.xml ./service/auth/pom.xml
 RUN mvn dependency:go-offline -ntp
 COPY . .
 RUN mvn clean package -ntp -DskipTests

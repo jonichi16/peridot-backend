@@ -23,6 +23,7 @@
 	</developers>
 	<modules>
 		<module>lib/common</module>
+		<module>service/auth</module>
 		<module>service/core</module>
 	</modules>
 	<scm>
