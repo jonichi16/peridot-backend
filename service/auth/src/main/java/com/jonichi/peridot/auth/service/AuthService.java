@@ -23,4 +23,16 @@ public interface AuthService {
      * @return an {@link AuthTokenDTO} containing the authentication token and user details
      */
     AuthTokenDTO register(String username, String email, String password);
+
+    /**
+     * Authenticates a user with the given credentials.
+     *
+     * <p>This method validates the provided username and password against the stored credentials.
+     * If the authentication is successful, it generates and returns an authentication token.</p>
+     *
+     * @param username the username of the user attempting to authenticate
+     * @param password the password of the user attempting to authenticate
+     * @return an {@link AuthTokenDTO} containing the authentication token and user details
+     */
+    AuthTokenDTO authenticate(String username, String password);
 }
