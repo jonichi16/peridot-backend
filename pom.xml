@@ -22,6 +22,7 @@
 		<developer/>
 	</developers>
 	<modules>
+		<module>lib/common</module>
 		<module>service/core</module>
 	</modules>
 	<scm>
@@ -34,6 +35,12 @@
 		<java.version>21</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<asciidoctor-maven-plugin.version>2.2.1</asciidoctor-maven-plugin.version>
+		<jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
+		<maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
+		<checkstyle.version>10.20.1</checkstyle.version>
+		<spotbugs-maven-plugin.version>4.8.6.0</spotbugs-maven-plugin.version>
+		<spotbugs.version>4.8.6</spotbugs.version>
+		<maven-pmd-plugin.version>3.26.0</maven-pmd-plugin.version>
 	</properties>
 	<dependencies>
 <!--		Main dependencies -->
@@ -57,10 +64,6 @@
 <!--			<groupId>org.postgresql</groupId>-->
 <!--			<artifactId>postgresql</artifactId>-->
 <!--			<scope>runtime</scope>-->
-<!--		</dependency>-->
-<!--		<dependency>-->
-<!--			<groupId>org.liquibase</groupId>-->
-<!--			<artifactId>liquibase-core</artifactId>-->
 <!--		</dependency>-->
 
 <!--		Dev dependencies -->
@@ -185,7 +188,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.12</version>
+				<version>${jacoco-maven-plugin.version}</version>
 				<executions>
 					<execution>
 						<id>ut-prepare-agent</id>
@@ -226,7 +229,7 @@
 					<excludes>
 						<exclude>**/Main.class</exclude>
 						<exclude>**/*App.class</exclude>
-						<exclude>com/jonichi/envelope/**/constant/**</exclude>
+						<exclude>com/jonichi/peridot/**/constant/**</exclude>
 						<exclude>**/config/**</exclude>
 						<exclude>**/listener/**</exclude>
 					</excludes>
@@ -236,12 +239,12 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>3.6.0</version>
+				<version>${maven-checkstyle-plugin.version}</version>
 				<dependencies>
 					<dependency>
 						<groupId>com.puppycrawl.tools</groupId>
 						<artifactId>checkstyle</artifactId>
-						<version>10.20.1</version>
+						<version>${checkstyle.version}</version>
 					</dependency>
 				</dependencies>
 				<configuration>
@@ -256,12 +259,12 @@
 			<plugin>
 				<groupId>com.github.spotbugs</groupId>
 				<artifactId>spotbugs-maven-plugin</artifactId>
-				<version>4.8.6.0</version>
+				<version>${spotbugs-maven-plugin.version}</version>
 				<dependencies>
 					<dependency>
 						<groupId>com.github.spotbugs</groupId>
 						<artifactId>spotbugs</artifactId>
-						<version>4.8.6</version>
+						<version>${spotbugs.version}</version>
 					</dependency>
 				</dependencies>
 			</plugin>
@@ -269,7 +272,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
-				<version>3.26.0</version>
+				<version>${maven-pmd-plugin.version}</version>
 				<configuration>
 					<linkXRef>false</linkXRef>
 					<printFailingErrors>true</printFailingErrors>

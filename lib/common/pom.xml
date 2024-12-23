@@ -11,14 +11,13 @@
     </parent>
 
     <groupId>com.jonichi.peridot</groupId>
-    <artifactId>core</artifactId>
+    <artifactId>common</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
-            <groupId>com.jonichi.peridot</groupId>
-            <artifactId>common</artifactId>
-            <version>0.0.1</version>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
         </dependency>
     </dependencies>
 
@@ -27,6 +26,19 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-maven-plugin</artifactId>
+                <configuration>
+                    <propertyFileWillOverride>true</propertyFileWillOverride>
+                    <propertyFile>liquibase.properties</propertyFile>
+                    <searchPath>../../config/liquibase/</searchPath>
+                </configuration>
             </plugin>
         </plugins>
     </build>
