@@ -23,7 +23,20 @@ public interface JwtService {
      */
     String generateToken(UserDetails user);
 
+    /**
+     * Extracts the username from the given JWT token.
+     *
+     * @param token the JWT token
+     * @return the username from the token
+     */
     String extractUsername(String token);
 
+    /**
+     * Validates the JWT token by checking the username and expiration.
+     *
+     * @param token the JWT token
+     * @param userDetails the user details to compare against the token
+     * @return true if the token is valid, otherwise false
+     */
     boolean isTokenValid(String token, UserDetails userDetails);
 }
