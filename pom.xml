@@ -126,7 +126,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<mainClass>com.jonichi.envelope.core.Main</mainClass>
+					<mainClass>com.jonichi.peridot.core.Main</mainClass>
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>
