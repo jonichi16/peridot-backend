@@ -2,6 +2,7 @@ package com.jonichi.peridot.common.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.Instant;
+import java.time.ZoneId;
 import lombok.Getter;
 
 /**
@@ -37,7 +38,7 @@ public abstract class ApiResponse<T> {
         this.success = success;
         this.code = code;
         this.message = message;
-        this.timestamp = Instant.now().toString();
+        this.timestamp = Instant.now().atZone(ZoneId.systemDefault()).toString();
     }
 
     /**
