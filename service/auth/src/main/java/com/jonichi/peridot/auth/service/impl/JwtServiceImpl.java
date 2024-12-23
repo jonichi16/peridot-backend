@@ -74,6 +74,7 @@ public class JwtServiceImpl implements JwtService {
      * @param token the JWT token
      * @return the username from the token
      */
+    @Override
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
@@ -134,6 +135,7 @@ public class JwtServiceImpl implements JwtService {
      * @param userDetails the user details to compare against the token
      * @return true if the token is valid, otherwise false
      */
+    @Override
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
