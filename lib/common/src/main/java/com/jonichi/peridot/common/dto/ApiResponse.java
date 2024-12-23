@@ -38,7 +38,7 @@ public abstract class ApiResponse<T> {
         this.success = success;
         this.code = code;
         this.message = message;
-        this.timestamp = Instant.now().atZone(ZoneId.systemDefault()).toString();
+        this.timestamp = Instant.now().toString();
     }
 
     /**
