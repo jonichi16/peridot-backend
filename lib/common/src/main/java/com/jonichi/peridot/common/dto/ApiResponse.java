@@ -2,7 +2,6 @@ package com.jonichi.peridot.common.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.Instant;
-import java.time.ZoneId;
 import lombok.Getter;
 
 /**
