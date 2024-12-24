@@ -24,8 +24,9 @@
 	<modules>
 		<module>lib/common</module>
 		<module>service/auth</module>
+		<module>service/budget</module>
 		<module>service/core</module>
-	</modules>
+    </modules>
 	<scm>
 		<connection/>
 		<developerConnection/>
