@@ -274,6 +274,10 @@ databaseChangeLog:
             baseColumnNames: status
             referencedTableName: reference_code
             referencedColumnNames: code
+        - addUniqueConstraint:
+            tableName: budget
+            columnNames: user_id, period
+            constraintName: user_id_period_unique
   - changeSet:
       id: 1.0.5-tag
       author: jonichi

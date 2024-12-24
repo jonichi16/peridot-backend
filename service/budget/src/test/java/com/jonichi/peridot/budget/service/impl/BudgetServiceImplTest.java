@@ -5,11 +5,13 @@ import com.jonichi.peridot.budget.dto.BudgetResponseDTO;
 import com.jonichi.peridot.budget.model.Budget;
 import com.jonichi.peridot.budget.model.BudgetStatus;
 import com.jonichi.peridot.budget.repository.BudgetRepository;
+import com.jonichi.peridot.common.exception.PeridotDuplicateException;
 import com.jonichi.peridot.common.util.TransactionalHandler;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.function.Supplier;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
@@ -19,6 +21,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 
 @ExtendWith(MockitoExtension.class)
 public class BudgetServiceImplTest {
@@ -82,6 +85,31 @@ public class BudgetServiceImplTest {
         verify(userUtil, times(1)).getUserId();
         verify(budgetRepository, times(1)).save(any(Budget.class));
         assertThat(budgetResponseDTO.budgetId()).isEqualTo(1);
+    }
+
+    @Test
+    public void createBudget_withDuplicateUserAndPeriod_shouldThrowPeridotDuplicateError() throws Exception {
+        // given
+        BigDecimal amount = new BigDecimal("1000");
+
+        // when
+        when(userUtil.getUserId()).thenReturn(1);
+        when(budgetRepository.save(any(Budget.class)))
+                .thenThrow(
+                        new DataIntegrityViolationException(
+                                "Detail: Key (user_id, period)=(1, 2024-12-01) already exists."
+                        )
+                );
+        when(transactionalHandler.runInTransactionSupplier(any(Supplier.class)))
+                .thenAnswer(invocation -> {
+                    Supplier<Budget> supplier = invocation.getArgument(0);
+                    return supplier.get();
+                });
+
+        // then
+        assertThatThrownBy(() -> budgetService.createBudget(amount))
+                .isInstanceOf(PeridotDuplicateException.class)
+                .hasMessage("Budget already exists");
     }
 
 }
