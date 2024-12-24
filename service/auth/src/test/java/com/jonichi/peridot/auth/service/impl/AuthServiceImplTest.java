@@ -49,7 +49,7 @@ public class AuthServiceImplTest {
                 .username(username)
                 .email(email)
                 .password(encodedPassword)
-                .role(Role.USER)
+                .role(Role.USER_ROLE_ACCOUNT)
                 .build();
 
         User user = User.builder()
@@ -57,7 +57,7 @@ public class AuthServiceImplTest {
                 .username(username)
                 .email(email)
                 .password(encodedPassword)
-                .role(Role.USER)
+                .role(Role.USER_ROLE_ACCOUNT)
                 .build();
 
         // when
@@ -85,7 +85,7 @@ public class AuthServiceImplTest {
                 .username(username)
                 .email(email)
                 .password(encodedPassword)
-                .role(Role.USER)
+                .role(Role.USER_ROLE_ACCOUNT)
                 .build();
 
         User user = User.builder()
@@ -93,7 +93,7 @@ public class AuthServiceImplTest {
                 .username(username)
                 .email(email)
                 .password(encodedPassword)
-                .role(Role.USER)
+                .role(Role.USER_ROLE_ACCOUNT)
                 .build();
 
         // when
@@ -120,7 +120,7 @@ public class AuthServiceImplTest {
                 .username(username)
                 .email(email)
                 .password(encodedPassword)
-                .role(Role.USER)
+                .role(Role.USER_ROLE_ACCOUNT)
                 .build();
 
         // when
@@ -146,7 +146,7 @@ public class AuthServiceImplTest {
                 .username(username)
                 .email(email)
                 .password(encodedPassword)
-                .role(Role.USER)
+                .role(Role.USER_ROLE_ACCOUNT)
                 .build();
 
         // when
