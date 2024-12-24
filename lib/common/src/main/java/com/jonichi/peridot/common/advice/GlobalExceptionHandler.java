@@ -14,6 +14,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -169,6 +170,32 @@ public class GlobalExceptionHandler {
         HttpStatus status = HttpStatus.UNAUTHORIZED;
         ApiResponse<Void> response = ErrorResponse.<Void>builder()
                 .code(status.value())
+                .message("Invalid username or password")
+                .errorCode(ErrorCode.UNAUTHORIZED)
+                .build();
+
+        return ResponseEntity.status(status).body(response);
+
+    }
+
+    /**
+     * Handles {@link UsernameNotFoundException} thrown during authentication.
+     *
+     * <p>This method intercepts {@link UsernameNotFoundException} and returns a response indicating
+     * that the provided username or password is invalid. </p>
+     *
+     * @param e the {@link UsernameNotFoundException} thrown during authentication
+     * @return a {@link ResponseEntity} containing an {@link ApiResponse} with an error message and
+     *     status code 401 (UNAUTHORIZED)
+     */
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleUsernameNotFound(UsernameNotFoundException e) {
+
+        logger.error("Username not found: {}", e.getMessage());
+
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+        ApiResponse<Void> response = ErrorResponse.<Void>builder()
+                .code(status.value())
                 .message(e.getMessage())
                 .errorCode(ErrorCode.UNAUTHORIZED)
                 .build();
@@ -188,7 +215,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleAll(Exception e) {
-        logger.error("Exception occurred", e);
+        logger.error("Exception occurred: {}", e.getMessage());
 
 
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
