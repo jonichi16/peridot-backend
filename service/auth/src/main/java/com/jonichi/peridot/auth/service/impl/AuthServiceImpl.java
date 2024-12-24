@@ -45,7 +45,7 @@ public class AuthServiceImpl implements AuthService {
                 .username(username)
                 .email(email)
                 .password(encodedPassword)
-                .role(Role.USER)
+                .role(Role.USER_ROLE_ACCOUNT)
                 .build();
 
         User user = userRepository.save(userDetails);
