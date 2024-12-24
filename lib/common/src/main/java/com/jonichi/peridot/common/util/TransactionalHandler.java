@@ -1,19 +1,17 @@
-package com.jonichi.peridot.common.util.listener;
+package com.jonichi.peridot.common.util;
 
+import com.jonichi.peridot.common.util.listener.TransactionEventListener;
 import java.util.function.Supplier;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Service class to handle running code within a transaction context.
+ * Interface to handle running code within a transaction context.
  *
  * <p>The {@code TransactionalHandler} class provides functionality to run operations within
  * a transactional boundary. It ensures that the provided runnable is executed in a Spring-managed
  * transaction with the appropriate propagation behavior.</p>
  */
-@Service
-public class TransactionalHandler {
+public interface TransactionalHandler {
 
     /**
      * Runs the provided {@code Runnable} in a transaction.
@@ -24,11 +22,7 @@ public class TransactionalHandler {
      *
      * @param runnable the operation to run within the transaction context
      */
-    @Transactional(propagation = Propagation.REQUIRED)
-    public void runInTransaction(Runnable runnable) {
-        TransactionEventListener.registerTransactionEvents();
-        runnable.run();
-    }
+    void runInTransaction(Runnable runnable);
 
     /**
      * Executes the provided {@link Supplier} within a transactional context.
@@ -47,10 +41,6 @@ public class TransactionalHandler {
      * @param supplier the {@link Supplier} to execute within the transaction
      * @return the result of the {@link Supplier#get()} method
      */
-    @Transactional(propagation = Propagation.REQUIRED)
-    public <T> T runInTransactionSupplier(Supplier<T> supplier) {
-        TransactionEventListener.registerTransactionEvents();
-        return supplier.get();
-    }
+    <T> T runInTransactionSupplier(Supplier<T> supplier);
 
 }
