@@ -8,6 +8,7 @@ import com.jonichi.peridot.budget.model.BudgetStatus;
 import com.jonichi.peridot.budget.repository.BudgetRepository;
 import com.jonichi.peridot.budget.service.BudgetService;
 import com.jonichi.peridot.common.exception.PeridotDuplicateException;
+import com.jonichi.peridot.common.exception.PeridotNotFoundException;
 import com.jonichi.peridot.common.util.DateUtil;
 import com.jonichi.peridot.common.util.TransactionalHandler;
 import java.math.BigDecimal;
@@ -68,6 +69,10 @@ public class BudgetServiceImpl implements BudgetService {
 
     @Override
     public BudgetDataDTO getCurrentBudget() {
-        return null;
+        Integer userId = userUtil.getUserId();
+
+        return budgetRepository
+                .getCurrentBudget(userId, DateUtil.getCurrentPeriod())
+                .orElseThrow(() -> new PeridotNotFoundException("Budget does not exist"));
     }
 }
