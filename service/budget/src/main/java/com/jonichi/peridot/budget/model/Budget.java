@@ -18,6 +18,13 @@ import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+/**
+ * Entity representing a budget.
+ *
+ * <p>The {@code Budget} entity stores information about a user's budget,
+ * including its amount, status, and associated metadata.</p>
+ *
+ */
 @Entity
 @Table(name = "budget")
 @Builder
