@@ -50,7 +50,7 @@ public class UserUtilImplTest {
                 .username("test")
                 .email("test@mail.com")
                 .password("encodedPassword")
-                .role(Role.USER)
+                .role(Role.USER_ROLE_ACCOUNT)
                 .build();
 
         // when

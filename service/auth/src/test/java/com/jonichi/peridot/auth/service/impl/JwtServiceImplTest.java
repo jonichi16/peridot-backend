@@ -32,7 +32,7 @@ public class JwtServiceImplTest {
                 .username("test")
                 .email("test@mail.com")
                 .password("secret")
-                .role(Role.USER)
+                .role(Role.USER_ROLE_ACCOUNT)
                 .build();
 
         // when
@@ -51,7 +51,7 @@ public class JwtServiceImplTest {
                 .username("test")
                 .email("test@mail.com")
                 .password("secret")
-                .role(Role.USER)
+                .role(Role.USER_ROLE_ACCOUNT)
                 .build();
 
         // when
@@ -73,7 +73,7 @@ public class JwtServiceImplTest {
                 .username("test")
                 .email("test@mail.com")
                 .password("secret")
-                .role(Role.USER)
+                .role(Role.USER_ROLE_ACCOUNT)
                 .build();
 
         String token = jwtServiceImpl.generateToken(user);
@@ -93,7 +93,7 @@ public class JwtServiceImplTest {
                 .username("test")
                 .email("test@mail.com")
                 .password("secret")
-                .role(Role.USER)
+                .role(Role.USER_ROLE_ACCOUNT)
                 .build();
 
         String token = jwtServiceImpl.generateToken(user);
@@ -105,7 +105,7 @@ public class JwtServiceImplTest {
                 .username("test2")
                 .email("test2@mail.com")
                 .password("secret")
-                .role(Role.USER)
+                .role(Role.USER_ROLE_ACCOUNT)
                 .build();
 
         assertThat(jwtServiceImpl.isTokenValid(token, user2)).isFalse();
