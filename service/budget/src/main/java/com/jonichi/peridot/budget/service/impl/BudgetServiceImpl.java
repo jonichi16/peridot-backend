@@ -1,6 +1,7 @@
 package com.jonichi.peridot.budget.service.impl;
 
 import com.jonichi.peridot.auth.service.UserUtil;
+import com.jonichi.peridot.budget.dto.BudgetDataDTO;
 import com.jonichi.peridot.budget.dto.BudgetResponseDTO;
 import com.jonichi.peridot.budget.model.Budget;
 import com.jonichi.peridot.budget.model.BudgetStatus;
@@ -63,5 +64,10 @@ public class BudgetServiceImpl implements BudgetService {
             logger.info("End - Service - createBudget");
         }
 
+    }
+
+    @Override
+    public BudgetDataDTO getCurrentBudget() {
+        return null;
     }
 }

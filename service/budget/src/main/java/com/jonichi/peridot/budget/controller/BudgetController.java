@@ -1,11 +1,13 @@
 package com.jonichi.peridot.budget.controller;
 
+import com.jonichi.peridot.budget.dto.BudgetDataDTO;
 import com.jonichi.peridot.budget.dto.BudgetResponseDTO;
 import com.jonichi.peridot.budget.dto.CreateBudgetDTO;
 import com.jonichi.peridot.budget.service.BudgetService;
 import com.jonichi.peridot.common.dto.ApiResponse;
 import com.jonichi.peridot.common.dto.SuccessResponse;
 import jakarta.validation.Valid;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,9 +67,36 @@ public class BudgetController {
         return ResponseEntity.status(status).body(response);
     }
 
+    /**
+     * Retrieves the current budget for the authenticated user.
+     *
+     * <p>This method retrieves the budget data for the current period and returns it in a
+     * {@link BudgetDataDTO}. The current period is determined based on the system date, and the
+     * budget is fetched using the {@link BudgetService} service layer.</p>
+     *
+     * @return a {@link ResponseEntity} containing the status and the current budget data wrapped
+     *     in an {@link ApiResponse} object.
+     */
     @GetMapping("/current")
-    public ResponseEntity<?> getBudgetById() {
-        return ResponseEntity.status(HttpStatus.OK).build();
+    public ResponseEntity<ApiResponse<BudgetDataDTO>> getCurrentBudget() {
+        logger.info("Start - Controller - getCurrentBudget");
+        logger.debug(
+                "Current period = {}",
+                LocalDate.now()
+        );
+
+        BudgetDataDTO budgetDataDTO = budgetService.getCurrentBudget();
+
+        HttpStatus status = HttpStatus.OK;
+        ApiResponse<BudgetDataDTO> response = SuccessResponse.<BudgetDataDTO>builder()
+                .code(status.value())
+                .message("Current budget retrieved successfully")
+                .data(budgetDataDTO)
+                .build();
+
+
+        logger.info("End - Controller - getCurrentBudget");
+        return ResponseEntity.status(status).body(response);
     }
 
 }

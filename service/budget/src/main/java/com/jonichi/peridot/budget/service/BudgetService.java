@@ -1,5 +1,6 @@
 package com.jonichi.peridot.budget.service;
 
+import com.jonichi.peridot.budget.dto.BudgetDataDTO;
 import com.jonichi.peridot.budget.dto.BudgetResponseDTO;
 import java.math.BigDecimal;
 
@@ -23,4 +24,15 @@ public interface BudgetService {
      * @return a {@link BudgetResponseDTO} containing details of the created budget
      */
     BudgetResponseDTO createBudget(BigDecimal amount);
+    
+    /**
+     * Retrieves the current budget for the user.
+     *
+     * <p>This method fetches the budget information for the current period,
+     * including the amount and status of the budget.</p>
+     *
+     * @return a {@link BudgetDataDTO} containing the current budget's period,
+     *         amount, and status.
+     */
+    BudgetDataDTO getCurrentBudget();
 }
