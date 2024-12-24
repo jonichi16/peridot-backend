@@ -80,6 +80,12 @@ databaseChangeLog:
               - column:
                   name: role
                   value: USER
+              - column:
+                  name: created_date
+                  valueComputed: timezone('UTC', CURRENT_TIMESTAMP)
+              - column:
+                  name: updated_date
+                  valueComputed: timezone('UTC', CURRENT_TIMESTAMP)
         - sql:
             comment: "Resynchronize _user_sequence"
             sql: "SELECT setval('_user_sequence', (SELECT MAX(id) FROM _user));"
