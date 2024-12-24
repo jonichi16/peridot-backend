@@ -6,6 +6,7 @@ import com.jonichi.peridot.budget.model.Budget;
 import com.jonichi.peridot.budget.model.BudgetStatus;
 import com.jonichi.peridot.budget.repository.BudgetRepository;
 import com.jonichi.peridot.budget.service.BudgetService;
+import com.jonichi.peridot.common.exception.PeridotDuplicateException;
 import com.jonichi.peridot.common.util.DateUtil;
 import com.jonichi.peridot.common.util.TransactionalHandler;
 import java.math.BigDecimal;
@@ -13,6 +14,7 @@ import java.util.function.Supplier;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -36,22 +38,30 @@ public class BudgetServiceImpl implements BudgetService {
     public BudgetResponseDTO createBudget(BigDecimal amount) {
         logger.info("Start - Service - createBudget");
 
-        Integer userId = userUtil.getUserId();
+        try {
+            Integer userId = userUtil.getUserId();
 
-        Supplier<Budget> supplier = () -> budgetRepository.save(
-                Budget.builder()
-                        .userId(userId)
-                        .amount(amount)
-                        .period(DateUtil.getCurrentPeriod())
-                        .status(BudgetStatus.BUDGET_STATUS_INCOMPLETE)
-                        .build()
-        );
+            Supplier<Budget> supplier = () -> budgetRepository.save(
+                    Budget.builder()
+                            .userId(userId)
+                            .amount(amount)
+                            .period(DateUtil.getCurrentPeriod())
+                            .status(BudgetStatus.BUDGET_STATUS_INCOMPLETE)
+                            .build()
+            );
 
-        Budget budget = transactionalHandler.runInTransactionSupplier(supplier);
+            Budget budget = transactionalHandler.runInTransactionSupplier(supplier);
 
-        logger.info("End - Service - createBudget");
-        return BudgetResponseDTO.builder()
-                .budgetId(budget.getId())
-                .build();
+            return BudgetResponseDTO.builder()
+                    .budgetId(budget.getId())
+                    .build();
+        } catch (DataIntegrityViolationException e) {
+            logger.error("DataIntegrityViolationException: {}", e.getMessage());
+
+            throw new PeridotDuplicateException("Budget already exists");
+        } finally {
+            logger.info("End - Service - createBudget");
+        }
+
     }
 }
