@@ -4,7 +4,6 @@ import com.jonichi.peridot.auth.model.Role;
 import com.jonichi.peridot.auth.model.User;
 import java.util.HashMap;
 import java.util.Map;
-import org.aspectj.lang.annotation.Before;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
