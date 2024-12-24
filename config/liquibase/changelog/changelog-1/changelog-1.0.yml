@@ -3,6 +3,100 @@ databaseChangeLog:
       id: 1.0.0
       author: jonichi
       changes:
+        - createTable:
+            tableName: reference_code
+            columns:
+              - column:
+                  name: id
+                  type: SERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: code
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+                    uniqueConstraintName: reference_code_unique
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: category
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: 1.0.0-tag
+      author: jonichi
+      changes:
+        - tagDatabase:
+            tag: 1.0.0
+
+  - changeSet:
+      id: 1.0.1
+      author: jonichi
+      changes:
+        - insert:
+            tableName: reference_code
+            columns:
+              - column:
+                  name: code
+                  value: USER_ROLE_ACCOUNT
+              - column:
+                  name: description
+                  value: Standard user role
+              - column:
+                  name: category
+                  value: USER_ROLE
+        - insert:
+            tableName: reference_code
+            columns:
+              - column:
+                  name: code
+                  value: BUDGET_STATUS_COMPLETE
+              - column:
+                  name: description
+                  value: Status when allocation is complete
+              - column:
+                  name: category
+                  value: BUDGET_STATUS
+        - insert:
+            tableName: reference_code
+            columns:
+              - column:
+                  name: code
+                  value: BUDGET_STATUS_INCOMPLETE
+              - column:
+                  name: description
+                  value: Status when allocation is incomplete
+              - column:
+                  name: category
+                  value: BUDGET_STATUS
+        - insert:
+            tableName: reference_code
+            columns:
+              - column:
+                  name: code
+                  value: BUDGET_STATUS_INVALID
+              - column:
+                  name: description
+                  value: Status when allocation is invalid
+              - column:
+                  name: category
+                  value: BUDGET_STATUS
+  - changeSet:
+      id: 1.0.1-tag
+      author: jonichi
+      changes:
+        - tagDatabase:
+            tag: 1.0.1
+
+  - changeSet:
+      id: 1.0.2
+      author: jonichi
+      changes:
         - createSequence:
             sequenceName: _user_sequence
             startValue: 1
@@ -54,11 +148,28 @@ databaseChangeLog:
                   constraints:
                     nullable: false
   - changeSet:
-      id: 1.0.0-tag
+      id: 1.0.2-tag
       author: jonichi
       changes:
         - tagDatabase:
-            tag: 1.0.0
+            tag: 1.0.2
+
+  - changeSet:
+      id: 1.0.3
+      author: jonichi
+      changes:
+        - addForeignKeyConstraint:
+            constraintName: fk_reference_code_user_role
+            baseTableName: _user
+            baseColumnNames: role
+            referencedTableName: reference_code
+            referencedColumnNames: code
+  - changeSet:
+      id: 1.0.3-tag
+      author: jonichi
+      changes:
+        - tagDatabase:
+            tag: 1.0.3
 
   - changeSet:
       id: test-data-1.0.0
@@ -79,7 +190,7 @@ databaseChangeLog:
                   value: $2a$12$q8TAcKs7mjnXPI7/MOWnU.cTpYpwJZe/OuBbrAVw13.aA6MjO6l32
               - column:
                   name: role
-                  value: USER
+                  value: USER_ROLE_ACCOUNT
               - column:
                   name: created_date
                   valueComputed: timezone('UTC', CURRENT_TIMESTAMP)
@@ -91,7 +202,7 @@ databaseChangeLog:
             sql: "SELECT setval('_user_sequence', (SELECT MAX(id) FROM _user));"
 
   - changeSet:
-      id: 1.0.1
+      id: 1.0.4
       author: jonichi
       changes:
         - createSequence:
@@ -140,16 +251,15 @@ databaseChangeLog:
                   defaultValueComputed: CURRENT_TIMESTAMP
                   constraints:
                     nullable: false
-
   - changeSet:
-      id: 1.0.1-tag
+      id: 1.0.4-tag
       author: jonichi
       changes:
         - tagDatabase:
-            tag: 1.0.1
+            tag: 1.0.4
 
   - changeSet:
-      id: 1.0.2
+      id: 1.0.5
       author: jonichi
       changes:
         - addForeignKeyConstraint:
@@ -158,10 +268,15 @@ databaseChangeLog:
             baseColumnNames: user_id
             referencedTableName: _user
             referencedColumnNames: id
-
+        - addForeignKeyConstraint:
+            constraintName: fk_reference_code_budget_status
+            baseTableName: budget
+            baseColumnNames: status
+            referencedTableName: reference_code
+            referencedColumnNames: code
   - changeSet:
-      id: 1.0.2-tag
+      id: 1.0.5-tag
       author: jonichi
       changes:
         - tagDatabase:
-            tag: 1.0.2
+            tag: 1.0.5
