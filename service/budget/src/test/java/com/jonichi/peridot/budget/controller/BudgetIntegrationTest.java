@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -105,6 +106,13 @@ public class BudgetIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createBudgetDTO)))
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser
+    public void getCurrentBudget_shouldReturn200Ok() throws Exception {
+        mockMvc.perform(get("/api/budgets/current"))
+                .andExpect(status().isOk());
     }
 
 }
