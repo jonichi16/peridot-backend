@@ -6,7 +6,9 @@ import com.jonichi.peridot.auth.model.User;
 import com.jonichi.peridot.auth.repository.UserRepository;
 import com.jonichi.peridot.auth.service.JwtService;
 import com.jonichi.peridot.common.exception.PeridotDuplicateException;
+import com.jonichi.peridot.common.util.TransactionalHandler;
 import java.util.Optional;
+import java.util.function.Supplier;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatNoException;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -34,8 +36,34 @@ public class AuthServiceImplTest {
     private JwtService jwtService;
     @Mock
     private AuthenticationManager authenticateManager;
+    @Mock
+    private TransactionalHandler transactionalHandler;
     @InjectMocks
     private AuthServiceImpl authService;
+
+    @Test
+    public void register_shouldUseTransactionalHandler() throws Exception {
+        // given
+        String username = "test";
+        String email = "test@mail.com";
+        String password = "secret";
+        String encodedPassword = "encodedPassword";
+
+        User user = User.builder()
+                .id(1)
+                .username(username)
+                .email(email)
+                .password(encodedPassword)
+                .role(Role.USER_ROLE_ACCOUNT)
+                .build();
+
+        // when
+        when(transactionalHandler.runInTransactionSupplier(any(Supplier.class))).thenReturn(user);
+        authService.register(username, email, password);
+
+        // then
+        verify(transactionalHandler, times(1)).runInTransactionSupplier(any(Supplier.class));
+    }
 
     @Test
     public void register_withUserDetails_shouldReturnToken() throws Exception {
@@ -64,6 +92,11 @@ public class AuthServiceImplTest {
         when(userRepository.save(request)).thenReturn(user);
         when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
         when(jwtService.generateToken(user)).thenReturn("jwtToken");
+        when(transactionalHandler.runInTransactionSupplier(any(Supplier.class)))
+                .thenAnswer(invocation -> {
+                    Supplier<User> supplier = invocation.getArgument(0);
+                    return supplier.get();
+                });
         AuthTokenDTO authTokenDTO = authService.register(username, email, password);
 
         // then
@@ -99,6 +132,11 @@ public class AuthServiceImplTest {
         // when
         when(userRepository.save(request)).thenReturn(user);
         when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
+        when(transactionalHandler.runInTransactionSupplier(any(Supplier.class)))
+                .thenAnswer(invocation -> {
+                    Supplier<User> supplier = invocation.getArgument(0);
+                    return supplier.get();
+                });
 
         // then
         assertThatNoException().isThrownBy(() ->

@@ -7,6 +7,8 @@ import com.jonichi.peridot.auth.repository.UserRepository;
 import com.jonichi.peridot.auth.service.AuthService;
 import com.jonichi.peridot.auth.service.JwtService;
 import com.jonichi.peridot.common.exception.PeridotDuplicateException;
+import com.jonichi.peridot.common.util.TransactionalHandler;
+import java.util.function.Supplier;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +33,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticateManager;
+    private final TransactionalHandler transactionalHandler;
 
     @Override
     public AuthTokenDTO register(String username, String email, String password) {
@@ -48,8 +51,11 @@ public class AuthServiceImpl implements AuthService {
                 .role(Role.USER_ROLE_ACCOUNT)
                 .build();
 
-        User user = userRepository.save(userDetails);
+        Supplier<User> supplier = () -> userRepository.save(userDetails);
 
+        User user = transactionalHandler.runInTransactionSupplier(supplier);
+
+        logger.info("End - Service - register");
         return AuthTokenDTO.builder()
                 .userId(user.getId())
                 .accessToken(jwtService.generateToken(user))
