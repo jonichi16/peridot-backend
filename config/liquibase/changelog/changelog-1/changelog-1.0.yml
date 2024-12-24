@@ -50,6 +50,9 @@ databaseChangeLog:
               - column:
                   name: updated_date
                   type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
   - changeSet:
       id: 1.0.0-tag
       author: jonichi
@@ -128,6 +131,9 @@ databaseChangeLog:
               - column:
                   name: updated_date
                   type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
 
   - changeSet:
       id: 1.0.1-tag

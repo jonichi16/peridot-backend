@@ -67,7 +67,7 @@ public class User implements UserDetails {
     private LocalDateTime createdDate;
 
     @UpdateTimestamp
-    @Column(name = "updated_date")
+    @Column(name = "updated_date", nullable = false)
     private LocalDateTime updatedDate;
 
     @Override
