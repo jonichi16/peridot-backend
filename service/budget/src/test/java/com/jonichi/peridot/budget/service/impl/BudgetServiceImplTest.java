@@ -1,14 +1,18 @@
 package com.jonichi.peridot.budget.service.impl;
 
 import com.jonichi.peridot.auth.service.UserUtil;
+import com.jonichi.peridot.budget.dto.BudgetDataDTO;
 import com.jonichi.peridot.budget.dto.BudgetResponseDTO;
 import com.jonichi.peridot.budget.model.Budget;
 import com.jonichi.peridot.budget.model.BudgetStatus;
 import com.jonichi.peridot.budget.repository.BudgetRepository;
 import com.jonichi.peridot.common.exception.PeridotDuplicateException;
+import com.jonichi.peridot.common.exception.PeridotNotFoundException;
+import com.jonichi.peridot.common.util.DateUtil;
 import com.jonichi.peridot.common.util.TransactionalHandler;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Optional;
 import java.util.function.Supplier;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -110,6 +114,43 @@ public class BudgetServiceImplTest {
         assertThatThrownBy(() -> budgetService.createBudget(amount))
                 .isInstanceOf(PeridotDuplicateException.class)
                 .hasMessage("Budget already exists");
+    }
+
+    @Test
+    public void getCurrentBudget_shouldReturnBudgetDataDTO() throws Exception {
+        // given
+        BigDecimal amount = new BigDecimal("1000");
+        LocalDate currentPeriod = DateUtil.getCurrentPeriod();
+        BudgetDataDTO budgetDataDTO = BudgetDataDTO.builder()
+                .period(currentPeriod)
+                .amount(amount)
+                .status(BudgetStatus.BUDGET_STATUS_INCOMPLETE)
+                .build();
+
+        // when
+        when(userUtil.getUserId()).thenReturn(1);
+        when(budgetRepository.getCurrentBudget(1, currentPeriod)).thenReturn(Optional.of(budgetDataDTO));
+        BudgetDataDTO response = budgetService.getCurrentBudget();
+
+        // then
+        verify(budgetRepository, times(1)).getCurrentBudget(1, currentPeriod);
+        assertThat(response).isEqualTo(budgetDataDTO);
+
+    }
+
+    @Test
+    public void getCurrentBudget_withNoBudget_shouldThrowPeridotNotFoundException() throws Exception {
+        // given
+        LocalDate currentPeriod = DateUtil.getCurrentPeriod();
+
+        // when
+        when(userUtil.getUserId()).thenReturn(1);
+        when(budgetRepository.getCurrentBudget(1, currentPeriod)).thenReturn(Optional.empty());
+
+        // then
+        assertThatThrownBy(() -> budgetService.getCurrentBudget())
+                .isInstanceOf(PeridotNotFoundException.class)
+                .hasMessage("Budget does not exist");
     }
 
 }

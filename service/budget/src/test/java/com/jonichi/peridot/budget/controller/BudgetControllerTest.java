@@ -6,6 +6,7 @@ import com.jonichi.peridot.budget.dto.CreateBudgetDTO;
 import com.jonichi.peridot.budget.model.BudgetStatus;
 import com.jonichi.peridot.budget.service.BudgetService;
 import com.jonichi.peridot.common.dto.ApiResponse;
+import com.jonichi.peridot.common.util.DateUtil;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -67,7 +68,7 @@ public class BudgetControllerTest {
     public void getCurrentBudget_shouldReturnTheCurrentBudget() throws Exception {
         // given
         BigDecimal amount = new BigDecimal("1000");
-        LocalDate currentPeriod = LocalDate.now();
+        LocalDate currentPeriod = DateUtil.getCurrentPeriod();
         BudgetDataDTO budgetDataDTO = BudgetDataDTO.builder()
                 .period(currentPeriod)
                 .amount(amount)
