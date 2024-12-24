@@ -3,6 +3,7 @@ package com.jonichi.peridot.common.advice;
 import com.jonichi.peridot.common.constant.ErrorCode;
 import com.jonichi.peridot.common.dto.ApiResponse;
 import com.jonichi.peridot.common.exception.PeridotDuplicateException;
+import com.jonichi.peridot.common.exception.PeridotNotFoundException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -81,6 +82,22 @@ public class GlobalExceptionHandlerTest {
         assertThat(response.getBody().getTimestamp()).isNotNull();
     }
 
+    @Test
+    public void handlePeridotNotFoundException_shouldReturnBadRequestError() throws Exception {
+        // given
+        PeridotNotFoundException exception = new PeridotNotFoundException("Object does not exist");
+
+        // when
+        ResponseEntity<ApiResponse<Void>> response = globalExceptionHandler.handlePeridotNotFoundException(exception);
+
+        // then
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(Objects.requireNonNull(response.getBody()).getCode()).isEqualTo(404);
+        assertThat(response.getBody().isSuccess()).isFalse();
+        assertThat(response.getBody().getMessage()).isEqualTo("Object does not exist");
+        assertThat(response.getBody().getErrorCode()).isEqualTo(ErrorCode.NOT_FOUND);
+        assertThat(response.getBody().getTimestamp()).isNotNull();
+    }
 
     @Test
     public void handleDataIntegrityViolationException_shouldReturnBadRequestError() throws Exception {
