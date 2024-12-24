@@ -3,6 +3,7 @@ WORKDIR /app
 COPY service/core/pom.xml ./service/core/pom.xml
 COPY lib/common/pom.xml ./lib/common/pom.xml
 COPY service/auth/pom.xml ./service/auth/pom.xml
+COPY service/budget/pom.xml ./service/budget/pom.xml
 COPY pom.xml .
 RUN mvn dependency:go-offline -ntp
 COPY . .
