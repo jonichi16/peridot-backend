@@ -4,6 +4,7 @@ import com.jonichi.peridot.common.constant.ErrorCode;
 import com.jonichi.peridot.common.dto.ApiResponse;
 import com.jonichi.peridot.common.dto.ErrorResponse;
 import com.jonichi.peridot.common.exception.PeridotDuplicateException;
+import com.jonichi.peridot.common.exception.PeridotNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -140,6 +141,33 @@ public class GlobalExceptionHandler {
             NoResourceFoundException e
     ) {
         logger.error("No Resource Error: {}", e.getMessage());
+
+        HttpStatus status = HttpStatus.NOT_FOUND;
+
+        ApiResponse<Void> response = ErrorResponse.<Void>builder()
+                .code(status.value())
+                .message(e.getMessage())
+                .errorCode(ErrorCode.NOT_FOUND)
+                .build();
+
+        return ResponseEntity.status(status).body(response);
+    }
+
+    /**
+     * Handles {@link NoResourceFoundException} and maps it to a 404 Not Found response.
+     *
+     * <p>This method constructs an error response using {@link ErrorResponse} with a specific
+     * error code ({@link ErrorCode#NOT_FOUND}). It ensures that clients receive a structured
+     * error response with meaningful details when a resource cannot be found.</p>
+     *
+     * @param e the {@link NoResourceFoundException} thrown when a requested resource is not found
+     * @return a {@link ResponseEntity} containing a structured error response
+     */
+    @ExceptionHandler(PeridotNotFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handlePeridotNotFoundException(
+            PeridotNotFoundException e
+    ) {
+        logger.error("Peridot Not Found Error: {}", e.getMessage());
 
         HttpStatus status = HttpStatus.NOT_FOUND;
 
