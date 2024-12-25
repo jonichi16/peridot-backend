@@ -71,8 +71,14 @@ public class BudgetServiceImpl implements BudgetService {
     public BudgetDataDTO getCurrentBudget() {
         Integer userId = userUtil.getUserId();
 
-        return budgetRepository
+        Budget budget = budgetRepository
                 .getCurrentBudget(userId, DateUtil.getCurrentPeriod())
                 .orElseThrow(() -> new PeridotNotFoundException("Budget does not exist"));
+
+        return BudgetDataDTO.builder()
+                .period(budget.getPeriod())
+                .amount(budget.getAmount())
+                .status(budget.getStatus())
+                .build();
     }
 }

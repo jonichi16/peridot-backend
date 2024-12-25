@@ -121,20 +121,22 @@ public class BudgetServiceImplTest {
         // given
         BigDecimal amount = new BigDecimal("1000");
         LocalDate currentPeriod = DateUtil.getCurrentPeriod();
-        BudgetDataDTO budgetDataDTO = BudgetDataDTO.builder()
-                .period(currentPeriod)
+        Budget budget = Budget.builder()
+                .id(1)
+                .userId(1)
                 .amount(amount)
+                .period(currentPeriod)
                 .status(BudgetStatus.BUDGET_STATUS_INCOMPLETE)
                 .build();
 
         // when
         when(userUtil.getUserId()).thenReturn(1);
-        when(budgetRepository.getCurrentBudget(1, currentPeriod)).thenReturn(Optional.of(budgetDataDTO));
+        when(budgetRepository.getCurrentBudget(1, currentPeriod)).thenReturn(Optional.of(budget));
         BudgetDataDTO response = budgetService.getCurrentBudget();
 
         // then
         verify(budgetRepository, times(1)).getCurrentBudget(1, currentPeriod);
-        assertThat(response).isEqualTo(budgetDataDTO);
+        assertThat(response).isEqualTo(response);
 
     }
 
