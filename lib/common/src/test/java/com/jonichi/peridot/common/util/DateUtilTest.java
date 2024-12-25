@@ -3,7 +3,9 @@ package com.jonichi.peridot.common.util;
 import java.time.LocalDate;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.ActiveProfiles;
 
+@ActiveProfiles("test")
 public class DateUtilTest {
 
     @Test
