@@ -1,0 +1,10 @@
+spring:
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+
+logging:
+  level:
+    com:
+      jonichi: DEBUG
