@@ -1,8 +1,7 @@
-package com.jonichi.peridot.budget;
+package com.jonichi.peridot.budget.repository;
 
 import com.jonichi.peridot.budget.model.Budget;
 import com.jonichi.peridot.budget.model.BudgetStatus;
-import com.jonichi.peridot.budget.repository.BudgetRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.math.BigDecimal;
