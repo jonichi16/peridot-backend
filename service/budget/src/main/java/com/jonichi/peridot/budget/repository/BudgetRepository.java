@@ -1,10 +1,12 @@
 package com.jonichi.peridot.budget.repository;
 
-import com.jonichi.peridot.budget.dto.BudgetDataDTO;
 import com.jonichi.peridot.budget.model.Budget;
 import java.time.LocalDate;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 /**
  * Repository interface for managing {@link Budget} entities.
@@ -14,6 +16,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * updating, and deleting records.</p>
  *
  */
+@Repository
 public interface BudgetRepository extends JpaRepository<Budget, Integer> {
 
     /**
@@ -25,8 +28,17 @@ public interface BudgetRepository extends JpaRepository<Budget, Integer> {
      *
      * @param userId the ID of the user whose budget is to be retrieved
      * @param period the period for which the budget is requested
-     * @return an {@link Optional} containing a {@link BudgetDataDTO} with the current budget
+     * @return an {@link Optional} containing a {@link Budget} with the current budget
      *     details, or an empty {@link Optional} if no budget exists for the given user and period
      */
-    Optional<BudgetDataDTO> getCurrentBudget(Integer userId, LocalDate period);
+    @Query("""
+            SELECT b
+             FROM Budget b
+             WHERE b.userId = :userId
+                AND b.period = :period
+        """)
+    Optional<Budget> getCurrentBudget(
+            @Param("userId") Integer userId,
+            @Param("period") LocalDate period
+    );
 }
