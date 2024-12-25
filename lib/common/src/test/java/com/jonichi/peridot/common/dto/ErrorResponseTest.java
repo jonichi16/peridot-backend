@@ -3,7 +3,9 @@ package com.jonichi.peridot.common.dto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.ActiveProfiles;
 
+@ActiveProfiles("test")
 public class ErrorResponseTest {
 
     @Test

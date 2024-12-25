@@ -6,6 +6,7 @@ import com.jonichi.peridot.budget.dto.CreateBudgetDTO;
 import com.jonichi.peridot.budget.service.BudgetService;
 import com.jonichi.peridot.common.dto.ApiResponse;
 import com.jonichi.peridot.common.dto.SuccessResponse;
+import com.jonichi.peridot.common.util.DateUtil;
 import jakarta.validation.Valid;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
@@ -82,7 +83,7 @@ public class BudgetController {
         logger.info("Start - Controller - getCurrentBudget");
         logger.debug(
                 "Current period = {}",
-                LocalDate.now()
+                DateUtil.getCurrentPeriod()
         );
 
         BudgetDataDTO budgetDataDTO = budgetService.getCurrentBudget();
