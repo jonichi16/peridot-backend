@@ -21,7 +21,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
-public class UserUtilImplTest {
+public class AuthContextServiceImplTest {
 
     @Mock
     private Authentication auth;
@@ -30,11 +30,11 @@ public class UserUtilImplTest {
     @Mock
     private UserDetails userDetails;
 
-    private UserUtilImpl userUtil;
+    private AuthContextServiceImpl userUtil;
 
     @BeforeEach
     public void initSecurityContext() {
-        userUtil = new UserUtilImpl(userRepository);
+        userUtil = new AuthContextServiceImpl(userRepository);
         when(auth.getPrincipal()).thenReturn("test");
         SecurityContextHolder.getContext().setAuthentication(auth);
     }

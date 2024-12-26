@@ -1,6 +1,6 @@
 package com.jonichi.peridot.budget.service.impl;
 
-import com.jonichi.peridot.auth.service.UserUtil;
+import com.jonichi.peridot.auth.service.AuthContextService;
 import com.jonichi.peridot.budget.dto.BudgetDataDTO;
 import com.jonichi.peridot.budget.dto.BudgetResponseDTO;
 import com.jonichi.peridot.budget.model.Budget;
@@ -36,7 +36,7 @@ public class BudgetServiceImplTest {
     @Mock
     private BudgetRepository budgetRepository;
     @Mock
-    private UserUtil userUtil;
+    private AuthContextService authContextService;
     @Mock
     private TransactionalHandler transactionalHandler;
     @InjectMocks
@@ -79,7 +79,7 @@ public class BudgetServiceImplTest {
                 .build();
 
         // when
-        when(userUtil.getUserId()).thenReturn(1);
+        when(authContextService.getUserId()).thenReturn(1);
         when(budgetRepository.save(any(Budget.class))).thenReturn(budget);
         when(transactionalHandler.runInTransactionSupplier(any(Supplier.class)))
                 .thenAnswer(invocation -> {
@@ -89,7 +89,7 @@ public class BudgetServiceImplTest {
         BudgetResponseDTO budgetResponseDTO = budgetService.createBudget(amount);
 
         // then
-        verify(userUtil, times(1)).getUserId();
+        verify(authContextService, times(1)).getUserId();
         verify(budgetRepository, times(1)).save(any(Budget.class));
         assertThat(budgetResponseDTO.budgetId()).isEqualTo(1);
     }
@@ -100,7 +100,7 @@ public class BudgetServiceImplTest {
         BigDecimal amount = new BigDecimal("1000");
 
         // when
-        when(userUtil.getUserId()).thenReturn(1);
+        when(authContextService.getUserId()).thenReturn(1);
         when(budgetRepository.save(any(Budget.class)))
                 .thenThrow(
                         new DataIntegrityViolationException(
@@ -133,7 +133,7 @@ public class BudgetServiceImplTest {
                 .build();
 
         // when
-        when(userUtil.getUserId()).thenReturn(1);
+        when(authContextService.getUserId()).thenReturn(1);
         when(budgetRepository.getCurrentBudget(1, currentPeriod)).thenReturn(Optional.of(budget));
         BudgetDataDTO response = budgetService.getCurrentBudget();
 
@@ -149,7 +149,7 @@ public class BudgetServiceImplTest {
         LocalDate currentPeriod = DateUtil.getCurrentPeriod();
 
         // when
-        when(userUtil.getUserId()).thenReturn(1);
+        when(authContextService.getUserId()).thenReturn(1);
         when(budgetRepository.getCurrentBudget(1, currentPeriod)).thenReturn(Optional.empty());
 
         // then
@@ -172,7 +172,7 @@ public class BudgetServiceImplTest {
                 .build();
 
         // when
-        when(userUtil.getUserId()).thenReturn(1);
+        when(authContextService.getUserId()).thenReturn(1);
         doAnswer(invocation -> {
             Runnable action = invocation.getArgument(0);
             action.run();
@@ -182,7 +182,7 @@ public class BudgetServiceImplTest {
         BudgetResponseDTO budgetResponseDTO = budgetService.updateCurrentBudget(amount);
 
         // then
-        verify(userUtil, times(1)).getUserId();
+        verify(authContextService, times(1)).getUserId();
         verify(transactionalHandler, times(1)).runInTransaction(any(Runnable.class));
         verify(budgetRepository, times(1)).updateCurrentBudget(1, period, amount);
         verify(budgetRepository, times(1)).getCurrentBudget(1, period);
