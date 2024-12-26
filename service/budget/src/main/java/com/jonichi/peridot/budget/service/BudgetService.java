@@ -35,4 +35,6 @@ public interface BudgetService {
      *         amount, and status.
      */
     BudgetDataDTO getCurrentBudget();
+
+    BudgetResponseDTO updateCurrentBudget();
 }

@@ -95,9 +95,22 @@ public class BudgetControllerTest {
     @Test
     public void updateCurrentBudget_shouldReturnCorrectResponse() throws Exception {
         // given
+        CreateUpdateBudgetDTO createUpdateBudgetDTO = CreateUpdateBudgetDTO.builder()
+                .amount(new BigDecimal("1000"))
+                .build();
+        BudgetResponseDTO budgetResponseDTO = BudgetResponseDTO.builder()
+                .budgetId(1)
+                .build();
 
         // when
+        when(budgetService.updateCurrentBudget()).thenReturn(budgetResponseDTO);
+        ResponseEntity<ApiResponse<BudgetResponseDTO>> response = budgetController.updateCurrentBudget(createUpdateBudgetDTO);
 
         // then
+        verify(budgetService, times(1)).updateCurrentBudget();
+        assertThat(response.getStatusCode().value()).isEqualTo(200);
+        assertThat(Objects.requireNonNull(response.getBody()).getData().budgetId()).isEqualTo(1);
+        assertThat(response.getBody().getMessage()).isEqualTo("Budget updated successfully");
+        assertThat(response.getBody().getCode()).isEqualTo(200);
     }
 }

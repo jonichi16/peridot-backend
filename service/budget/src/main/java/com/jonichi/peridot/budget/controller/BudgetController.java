@@ -101,8 +101,26 @@ public class BudgetController {
     }
 
     @PutMapping("/current")
-    public ResponseEntity<?> updateCurrentBudget() {
-        return ResponseEntity.status(HttpStatus.OK).build();
+    public ResponseEntity<ApiResponse<BudgetResponseDTO>> updateCurrentBudget(
+            @RequestBody @Valid CreateUpdateBudgetDTO createUpdateBudgetDTO
+    ) {
+        logger.info("Start - Controller - updateCurrentBudget");
+        logger.debug(
+                "Request: new amount={}",
+                createUpdateBudgetDTO.amount()
+        );
+
+        BudgetResponseDTO budgetResponseDTO = budgetService.updateCurrentBudget();
+
+        HttpStatus status = HttpStatus.OK;
+        ApiResponse<BudgetResponseDTO> response = SuccessResponse.<BudgetResponseDTO>builder()
+                .code(status.value())
+                .message("Budget updated successfully")
+                .data(budgetResponseDTO)
+                .build();
+
+        logger.info("End - Controller - updateCurrentBudget");
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 }
