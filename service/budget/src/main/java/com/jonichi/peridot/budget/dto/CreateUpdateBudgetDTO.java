@@ -16,7 +16,7 @@ import lombok.Builder;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Builder
-public record CreateBudgetDTO(
+public record CreateUpdateBudgetDTO(
         @NotNull(message = "Amount is required")
         @DecimalMin(value = "0.0", inclusive = false, message = "Amount must be greater than 0")
         @Digits(
