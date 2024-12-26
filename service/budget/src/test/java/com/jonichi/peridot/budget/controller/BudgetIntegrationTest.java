@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jonichi.peridot.auth.config.SecurityConfig;
 import com.jonichi.peridot.auth.repository.UserRepository;
 import com.jonichi.peridot.budget.dto.CreateUpdateBudgetDTO;
+import com.jonichi.peridot.budget.repository.BudgetRepository;
 import com.jonichi.peridot.budget.service.BudgetService;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,8 @@ public class BudgetIntegrationTest {
     private MockMvc mockMvc;
     @MockBean
     private UserRepository userRepository;
+    @MockBean
+    private BudgetRepository budgetRepository;
     @MockBean
     private BudgetService budgetService;
 
