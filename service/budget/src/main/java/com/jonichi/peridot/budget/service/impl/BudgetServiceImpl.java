@@ -12,6 +12,8 @@ import com.jonichi.peridot.common.exception.PeridotNotFoundException;
 import com.jonichi.peridot.common.util.DateUtil;
 import com.jonichi.peridot.common.util.TransactionalHandler;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.function.Supplier;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -83,7 +85,24 @@ public class BudgetServiceImpl implements BudgetService {
     }
 
     @Override
-    public BudgetResponseDTO updateCurrentBudget() {
-        return null;
+    public BudgetResponseDTO updateCurrentBudget(BigDecimal amount) {
+        Integer userId = userUtil.getUserId();
+        LocalDate currentPeriod = DateUtil.getCurrentPeriod();
+
+        transactionalHandler.runInTransaction(()-> {
+            budgetRepository.updateCurrentBudget(
+                    userId,
+                    currentPeriod,
+                    amount
+            );
+        });
+
+        Budget budget = budgetRepository
+                .getCurrentBudget(userId, currentPeriod)
+                .orElseThrow(() -> new PeridotNotFoundException("Budget does not exist"));
+
+        return BudgetResponseDTO.builder()
+                .budgetId(budget.getId())
+                .build();
     }
 }
