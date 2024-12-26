@@ -3,7 +3,7 @@ package com.jonichi.peridot.budget.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jonichi.peridot.auth.config.SecurityConfig;
 import com.jonichi.peridot.auth.repository.UserRepository;
-import com.jonichi.peridot.budget.dto.CreateBudgetDTO;
+import com.jonichi.peridot.budget.dto.CreateUpdateBudgetDTO;
 import com.jonichi.peridot.budget.service.BudgetService;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
@@ -39,7 +39,7 @@ public class BudgetIntegrationTest {
     @WithMockUser
     public void createBudget_shouldReturn201Created() throws Exception {
         // given
-        CreateBudgetDTO createBudgetDTO = CreateBudgetDTO.builder()
+        CreateUpdateBudgetDTO createUpdateBudgetDTO = CreateUpdateBudgetDTO.builder()
                 .amount(new BigDecimal("1000"))
                 .build();
 
@@ -48,7 +48,7 @@ public class BudgetIntegrationTest {
         // then
         mockMvc.perform(post("/api/budgets")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(createBudgetDTO)))
+                        .content(objectMapper.writeValueAsString(createUpdateBudgetDTO)))
                 .andExpect(status().isCreated());
     }
 
@@ -100,14 +100,14 @@ public class BudgetIntegrationTest {
     @Test
     public void createBudget_withNoUser_shouldReturn403Forbidden() throws Exception {
         // given
-        CreateBudgetDTO createBudgetDTO = new CreateBudgetDTO(new BigDecimal("1000"));
+        CreateUpdateBudgetDTO createUpdateBudgetDTO = new CreateUpdateBudgetDTO(new BigDecimal("1000"));
 
         // when
 
         // then
         mockMvc.perform(post("/api/budgets")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(createBudgetDTO)))
+                        .content(objectMapper.writeValueAsString(createUpdateBudgetDTO)))
                 .andExpect(status().isForbidden());
     }
 
