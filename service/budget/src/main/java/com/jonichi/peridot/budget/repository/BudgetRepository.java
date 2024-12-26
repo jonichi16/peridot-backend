@@ -1,10 +1,12 @@
 package com.jonichi.peridot.budget.repository;
 
 import com.jonichi.peridot.budget.model.Budget;
+import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -34,17 +36,26 @@ public interface BudgetRepository extends JpaRepository<Budget, Integer> {
      */
     @Query("""
             SELECT b
-             FROM Budget b
-             WHERE b.userId = :userId
+            FROM Budget b
+            WHERE b.userId = :userId
                 AND b.period = :period
-        """)
+            """)
     Optional<Budget> getCurrentBudget(
             @Param("userId") Integer userId,
             @Param("period") LocalDate period
     );
 
+    @Transactional
+    @Modifying
     @Query("""
-            SELECT 1
+            UPDATE Budget b
+            SET b.amount = :amount, b.updatedDate = CURRENT_TIMESTAMP
+            WHERE b.userId = :userId
+                AND b.period = :period
             """)
-    void updateCurrentBudget(Integer userId, LocalDate period, BigDecimal amount);
+    void updateCurrentBudget(
+            @Param("userId") Integer userId,
+            @Param("period") LocalDate period,
+            @Param("amount") BigDecimal amount
+    );
 }
