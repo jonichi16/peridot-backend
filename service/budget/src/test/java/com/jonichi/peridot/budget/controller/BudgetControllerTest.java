@@ -103,11 +103,11 @@ public class BudgetControllerTest {
                 .build();
 
         // when
-        when(budgetService.updateCurrentBudget()).thenReturn(budgetResponseDTO);
+        when(budgetService.updateCurrentBudget(createUpdateBudgetDTO.amount())).thenReturn(budgetResponseDTO);
         ResponseEntity<ApiResponse<BudgetResponseDTO>> response = budgetController.updateCurrentBudget(createUpdateBudgetDTO);
 
         // then
-        verify(budgetService, times(1)).updateCurrentBudget();
+        verify(budgetService, times(1)).updateCurrentBudget(createUpdateBudgetDTO.amount());
         assertThat(response.getStatusCode().value()).isEqualTo(200);
         assertThat(Objects.requireNonNull(response.getBody()).getData().budgetId()).isEqualTo(1);
         assertThat(response.getBody().getMessage()).isEqualTo("Budget updated successfully");

@@ -36,5 +36,5 @@ public interface BudgetService {
      */
     BudgetDataDTO getCurrentBudget();
 
-    BudgetResponseDTO updateCurrentBudget();
+    BudgetResponseDTO updateCurrentBudget(BigDecimal amount);
 }

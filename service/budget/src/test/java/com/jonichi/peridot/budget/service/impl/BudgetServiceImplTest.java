@@ -21,6 +21,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -155,6 +156,37 @@ public class BudgetServiceImplTest {
         assertThatThrownBy(() -> budgetService.getCurrentBudget())
                 .isInstanceOf(PeridotNotFoundException.class)
                 .hasMessage("Budget does not exist");
+    }
+
+    @Test
+    public void updateCurrentBudget_shouldReturnCorrectResponse() throws Exception {
+        // given
+        BigDecimal amount = new BigDecimal("1000");
+        LocalDate period = LocalDate.of(2024, 12, 1);
+        Budget budget = Budget.builder()
+                .id(1)
+                .userId(1)
+                .amount(amount)
+                .period(period)
+                .status(BudgetStatus.BUDGET_STATUS_INCOMPLETE)
+                .build();
+
+        // when
+        when(userUtil.getUserId()).thenReturn(1);
+        doAnswer(invocation -> {
+            Runnable action = invocation.getArgument(0);
+            action.run();
+            return null;
+        }).when(transactionalHandler).runInTransaction(any(Runnable.class));
+        when(budgetRepository.getCurrentBudget(1, period)).thenReturn(Optional.of(budget));
+        BudgetResponseDTO budgetResponseDTO = budgetService.updateCurrentBudget(amount);
+
+        // then
+        verify(userUtil, times(1)).getUserId();
+        verify(transactionalHandler, times(1)).runInTransaction(any(Runnable.class));
+        verify(budgetRepository, times(1)).updateCurrentBudget(1, period, amount);
+        verify(budgetRepository, times(1)).getCurrentBudget(1, period);
+        assertThat(budgetResponseDTO.budgetId()).isEqualTo(1);
     }
 
 }
