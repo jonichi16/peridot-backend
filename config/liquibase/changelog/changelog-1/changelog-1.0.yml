@@ -144,9 +144,6 @@ databaseChangeLog:
               - column:
                   name: updated_date
                   type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
-                  constraints:
-                    nullable: false
   - changeSet:
       id: 1.0.2-tag
       author: jonichi
@@ -193,9 +190,6 @@ databaseChangeLog:
                   value: USER_ROLE_ACCOUNT
               - column:
                   name: created_date
-                  valueComputed: timezone('UTC', CURRENT_TIMESTAMP)
-              - column:
-                  name: updated_date
                   valueComputed: timezone('UTC', CURRENT_TIMESTAMP)
         - sql:
             comment: "Resynchronize _user_sequence"
@@ -248,9 +242,6 @@ databaseChangeLog:
               - column:
                   name: updated_date
                   type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
-                  constraints:
-                    nullable: false
   - changeSet:
       id: 1.0.4-tag
       author: jonichi
