@@ -119,4 +119,27 @@ public class BudgetRepositoryTest {
         assertThat(budgetDataDTO.isPresent()).isTrue();
     }
 
+    @Test
+    public void updateCurrentBudget_shouldUpdateCurrentBudgetWithCorrectAmount() throws Exception {
+        // given
+        Integer userId = 1;
+        LocalDate currentPeriod = LocalDate.of(2024, 12, 1);
+        BigDecimal amount = new BigDecimal("5000.00");
+
+        // when
+        Budget currentBudget = budgetRepository.getCurrentBudget(userId, currentPeriod).get();
+        assertThat(currentBudget.getCreatedDate()).isNotNull();
+        assertThat(currentBudget.getUpdatedDate()).isNull();
+
+        budgetRepository.updateCurrentBudget(userId, currentPeriod, amount);
+        entityManager.flush();
+
+        Budget updatedBudget = budgetRepository.getCurrentBudget(userId, currentPeriod).get();
+        entityManager.refresh(updatedBudget);
+
+        // then
+        assertThat(updatedBudget.getUpdatedDate()).isNotNull();
+        assertThat(updatedBudget.getAmount()).isEqualTo(amount);
+    }
+
 }
