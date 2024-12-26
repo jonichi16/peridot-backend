@@ -4,9 +4,17 @@ import com.jonichi.peridot.budget.model.Budget;
 import com.jonichi.peridot.budget.model.BudgetStatus;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import java.io.File;
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Optional;
+import liquibase.Liquibase;
+import liquibase.database.Database;
+import liquibase.database.DatabaseFactory;
+import liquibase.resource.DirectoryResourceAccessor;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -32,42 +40,70 @@ public class BudgetRepositoryTest {
     @PersistenceContext
     private EntityManager entityManager;
 
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
-            "postgres:14-alpine"
-    );
+    private static final PostgreSQLContainer<?> POSTGRES_CONTAINER =
+            new PostgreSQLContainer<>("postgres:14-alpine")
+                    .withDatabaseName("testdb")
+                    .withUsername("testuser")
+                    .withPassword("testpass");
+
+    private static Connection connection;
 
     @BeforeAll
-    static void beforeAll()  {
-        postgres.start();
+    static void beforeAll() throws Exception {
+        POSTGRES_CONTAINER.start();
+        connection = DriverManager.getConnection(
+                POSTGRES_CONTAINER.getJdbcUrl(),
+                POSTGRES_CONTAINER.getUsername(),
+                POSTGRES_CONTAINER.getPassword()
+        );
+
+        applyDatabaseMigrations();
+    }
+
+    private static void applyDatabaseMigrations() throws Exception {
+        Database database = DatabaseFactory.getInstance()
+                .findCorrectDatabaseImplementation(new liquibase.database.jvm.JdbcConnection(connection));
+        Liquibase liquibase = new Liquibase(
+                "changelog/changelog-root.yml",
+                new DirectoryResourceAccessor(new File("../../config/liquibase/")),
+                database
+        );
+        liquibase.update("");
     }
 
     @AfterAll
-    static void afterAll() {
-        postgres.stop();
+    static void afterAll() throws SQLException {
+        if (connection != null) {
+            connection.close();
+        }
+        POSTGRES_CONTAINER.stop();
+    }
+
+    @DynamicPropertySource
+    static void configureDatasourceProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", POSTGRES_CONTAINER::getJdbcUrl);
+        registry.add("spring.datasource.username", POSTGRES_CONTAINER::getUsername);
+        registry.add("spring.datasource.password", POSTGRES_CONTAINER::getPassword);
     }
 
     @BeforeEach
-    public void setUp() {
-        Budget budget = Budget.builder()
+    public void setUpTestData() {
+        Budget budget = createTestBudget();
+        budgetRepository.saveAndFlush(budget);
+    }
+
+    private Budget createTestBudget() {
+        return Budget.builder()
                 .userId(1)
                 .amount(new BigDecimal("1000"))
                 .period(LocalDate.of(2024, 12, 1))
                 .status(BudgetStatus.BUDGET_STATUS_INCOMPLETE)
                 .build();
-
-        budgetRepository.saveAndFlush(budget);
     }
 
     @AfterEach
     public void cleanUp() {
         budgetRepository.deleteAll();
-    }
-
-    @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
     }
 
     @Test
