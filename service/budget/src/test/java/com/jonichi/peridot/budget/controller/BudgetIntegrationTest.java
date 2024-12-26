@@ -17,6 +17,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
@@ -114,6 +115,13 @@ public class BudgetIntegrationTest {
     @WithMockUser
     public void getCurrentBudget_shouldReturn200Ok() throws Exception {
         mockMvc.perform(get("/api/budgets/current"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser
+    public void updateCurrentBudget_shouldReturn200Ok() throws Exception {
+        mockMvc.perform(put("/api/budgets/current"))
                 .andExpect(status().isOk());
     }
 
