@@ -2,7 +2,7 @@ package com.jonichi.peridot.budget.controller;
 
 import com.jonichi.peridot.budget.dto.BudgetDataDTO;
 import com.jonichi.peridot.budget.dto.BudgetResponseDTO;
-import com.jonichi.peridot.budget.dto.CreateBudgetDTO;
+import com.jonichi.peridot.budget.dto.CreateUpdateBudgetDTO;
 import com.jonichi.peridot.budget.service.BudgetService;
 import com.jonichi.peridot.common.dto.ApiResponse;
 import com.jonichi.peridot.common.dto.SuccessResponse;
@@ -42,20 +42,20 @@ public class BudgetController {
      * invokes the {@code BudgetService} to process the request, and returns the created budget
      * information.</p>
      *
-     * @param createBudgetDTO the request payload containing the budget amount
+     * @param createUpdateBudgetDTO the request payload containing the budget amount
      * @return a response entity containing the created budget and a success message
      */
     @PostMapping("")
     public ResponseEntity<ApiResponse<BudgetResponseDTO>> createBudget(
-            @RequestBody @Valid CreateBudgetDTO createBudgetDTO
+            @RequestBody @Valid CreateUpdateBudgetDTO createUpdateBudgetDTO
     ) {
         logger.info("Start - Controller - createBudget");
         logger.debug(
                 "Request: amount={}",
-                createBudgetDTO.amount()
+                createUpdateBudgetDTO.amount()
         );
 
-        BudgetResponseDTO budgetResponseDTO = budgetService.createBudget(createBudgetDTO.amount());
+        BudgetResponseDTO budgetResponseDTO = budgetService.createBudget(createUpdateBudgetDTO.amount());
 
         HttpStatus status = HttpStatus.CREATED;
         ApiResponse<BudgetResponseDTO> response = SuccessResponse.<BudgetResponseDTO>builder()

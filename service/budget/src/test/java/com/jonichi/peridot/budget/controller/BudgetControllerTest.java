@@ -2,7 +2,7 @@ package com.jonichi.peridot.budget.controller;
 
 import com.jonichi.peridot.budget.dto.BudgetDataDTO;
 import com.jonichi.peridot.budget.dto.BudgetResponseDTO;
-import com.jonichi.peridot.budget.dto.CreateBudgetDTO;
+import com.jonichi.peridot.budget.dto.CreateUpdateBudgetDTO;
 import com.jonichi.peridot.budget.model.BudgetStatus;
 import com.jonichi.peridot.budget.service.BudgetService;
 import com.jonichi.peridot.common.dto.ApiResponse;
@@ -34,21 +34,21 @@ public class BudgetControllerTest {
     @Test
     public void createBudget_shouldCallBudgetServiceOnce() throws Exception {
         // given
-        CreateBudgetDTO createBudgetDTO = CreateBudgetDTO.builder()
+        CreateUpdateBudgetDTO createUpdateBudgetDTO = CreateUpdateBudgetDTO.builder()
                 .amount(new BigDecimal("1000"))
                 .build();
 
         // when
-        budgetController.createBudget(createBudgetDTO);
+        budgetController.createBudget(createUpdateBudgetDTO);
 
         // then
-        verify(budgetService, times(1)).createBudget(createBudgetDTO.amount());
+        verify(budgetService, times(1)).createBudget(createUpdateBudgetDTO.amount());
     }
     
     @Test
     public void createBudget_shouldReturnCorrectResponse() throws Exception {
         // given
-        CreateBudgetDTO createBudgetDTO = CreateBudgetDTO.builder()
+        CreateUpdateBudgetDTO createUpdateBudgetDTO = CreateUpdateBudgetDTO.builder()
                 .amount(new BigDecimal("1000"))
                 .build();
         BudgetResponseDTO budgetResponseDTO = BudgetResponseDTO.builder()
@@ -56,8 +56,8 @@ public class BudgetControllerTest {
                 .build();
         
         // when
-        when(budgetService.createBudget(createBudgetDTO.amount())).thenReturn(budgetResponseDTO);
-        ResponseEntity<ApiResponse<BudgetResponseDTO>> response = budgetController.createBudget(createBudgetDTO);
+        when(budgetService.createBudget(createUpdateBudgetDTO.amount())).thenReturn(budgetResponseDTO);
+        ResponseEntity<ApiResponse<BudgetResponseDTO>> response = budgetController.createBudget(createUpdateBudgetDTO);
         
         // then
         assertThat(response.getStatusCode().value()).isEqualTo(201);
@@ -92,4 +92,12 @@ public class BudgetControllerTest {
         assertThat(response.getBody().getTimestamp()).isNotNull();
     }
 
+    @Test
+    public void updateCurrentBudget_shouldReturnCorrectResponse() throws Exception {
+        // given
+
+        // when
+
+        // then
+    }
 }
