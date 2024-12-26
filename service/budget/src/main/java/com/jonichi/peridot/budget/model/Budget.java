@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,7 +19,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 /**
  * Entity representing a budget.
@@ -32,7 +32,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "budget")
+@Table(name = "budget", uniqueConstraints = {
+    @UniqueConstraint(name = "user_id_period_unique", columnNames = {"user_id", "period"})
+})
 public class Budget {
 
     @Id
@@ -61,7 +63,6 @@ public class Budget {
     @Column(name = "created_date", nullable = false, updatable = false)
     private LocalDateTime createdDate;
 
-    @UpdateTimestamp
     @Column(name = "updated_date")
     private LocalDateTime updatedDate;
 }
