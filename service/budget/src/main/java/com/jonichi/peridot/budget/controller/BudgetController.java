@@ -110,7 +110,9 @@ public class BudgetController {
                 createUpdateBudgetDTO.amount()
         );
 
-        BudgetResponseDTO budgetResponseDTO = budgetService.updateCurrentBudget();
+        BudgetResponseDTO budgetResponseDTO = budgetService.updateCurrentBudget(
+                createUpdateBudgetDTO.amount()
+        );
 
         HttpStatus status = HttpStatus.OK;
         ApiResponse<BudgetResponseDTO> response = SuccessResponse.<BudgetResponseDTO>builder()
