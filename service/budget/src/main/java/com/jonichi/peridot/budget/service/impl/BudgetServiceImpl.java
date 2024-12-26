@@ -1,6 +1,6 @@
 package com.jonichi.peridot.budget.service.impl;
 
-import com.jonichi.peridot.auth.service.UserUtil;
+import com.jonichi.peridot.auth.service.AuthContextService;
 import com.jonichi.peridot.budget.dto.BudgetDataDTO;
 import com.jonichi.peridot.budget.dto.BudgetResponseDTO;
 import com.jonichi.peridot.budget.model.Budget;
@@ -25,8 +25,8 @@ import org.springframework.stereotype.Service;
  *
  * <p>This service handles the creation of budgets, ensuring that the necessary data
  * is validated and persisted correctly. It relies on {@link BudgetRepository} for persistence,
- * {@link UserUtil} for fetching user details, and {@link TransactionalHandler} for transactional
- * operations.</p>
+ * {@link AuthContextService} for fetching user details, and {@link TransactionalHandler} for
+ * transactional operations.</p>
  */
 @Service
 @RequiredArgsConstructor
@@ -34,7 +34,7 @@ public class BudgetServiceImpl implements BudgetService {
 
     private static final Logger logger = LoggerFactory.getLogger(BudgetServiceImpl.class);
     private final BudgetRepository budgetRepository;
-    private final UserUtil userUtil;
+    private final AuthContextService authContextService;
     private final TransactionalHandler transactionalHandler;
 
     @Override
@@ -42,7 +42,7 @@ public class BudgetServiceImpl implements BudgetService {
         logger.info("Start - Service - createBudget");
 
         try {
-            Integer userId = userUtil.getUserId();
+            Integer userId = authContextService.getUserId();
 
             Supplier<Budget> supplier = () -> budgetRepository.save(
                     Budget.builder()
@@ -70,7 +70,7 @@ public class BudgetServiceImpl implements BudgetService {
 
     @Override
     public BudgetDataDTO getCurrentBudget() {
-        Integer userId = userUtil.getUserId();
+        Integer userId = authContextService.getUserId();
 
         Budget budget = budgetRepository
                 .getCurrentBudget(userId, DateUtil.getCurrentPeriod())
@@ -85,7 +85,7 @@ public class BudgetServiceImpl implements BudgetService {
 
     @Override
     public BudgetResponseDTO updateCurrentBudget(BigDecimal amount) {
-        Integer userId = userUtil.getUserId();
+        Integer userId = authContextService.getUserId();
         LocalDate currentPeriod = DateUtil.getCurrentPeriod();
 
         transactionalHandler.runInTransaction(() -> {
