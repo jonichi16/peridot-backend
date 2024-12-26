@@ -13,7 +13,6 @@ import com.jonichi.peridot.common.util.DateUtil;
 import com.jonichi.peridot.common.util.TransactionalHandler;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.function.Supplier;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -89,7 +88,7 @@ public class BudgetServiceImpl implements BudgetService {
         Integer userId = userUtil.getUserId();
         LocalDate currentPeriod = DateUtil.getCurrentPeriod();
 
-        transactionalHandler.runInTransaction(()-> {
+        transactionalHandler.runInTransaction(() -> {
             budgetRepository.updateCurrentBudget(
                     userId,
                     currentPeriod,

@@ -45,6 +45,17 @@ public interface BudgetRepository extends JpaRepository<Budget, Integer> {
             @Param("period") LocalDate period
     );
 
+    /**
+     * Updates the budget amount for a specific user and period.
+     *
+     * <p>This method executes a JPQL query to update the `amount` and `updatedDate` fields
+     * of the `Budget` entity for the given `userId` and `period`.
+     *
+     * @param userId the ID of the user whose budget needs to be updated.
+     * @param period the period (e.g., month or specific date) for which the budget is being
+     *     updated.
+     * @param amount the new budget amount to set.
+     */
     @Transactional
     @Modifying
     @Query("""
