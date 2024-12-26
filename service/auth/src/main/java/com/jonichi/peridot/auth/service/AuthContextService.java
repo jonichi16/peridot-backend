@@ -6,7 +6,7 @@ package com.jonichi.peridot.auth.service;
  * <p>This interface provides methods for fetching user details based on the current
  * authentication context.</p>
  */
-public interface UserUtil {
+public interface AuthContextService {
 
     /**
      * Retrieves the details of the currently authenticated user.
