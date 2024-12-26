@@ -171,7 +171,7 @@ databaseChangeLog:
   - changeSet:
       id: test-data-1.0.0
       author: jonichi
-      context: dev
+      context: dev, test
       changes:
         - insert:
             tableName: _user
