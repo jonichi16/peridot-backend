@@ -2,6 +2,7 @@ package com.jonichi.peridot.budget.service;
 
 import com.jonichi.peridot.budget.dto.BudgetDataDTO;
 import com.jonichi.peridot.budget.dto.BudgetResponseDTO;
+import com.jonichi.peridot.common.exception.PeridotNotFoundException;
 import java.math.BigDecimal;
 
 /**
@@ -36,5 +37,17 @@ public interface BudgetService {
      */
     BudgetDataDTO getCurrentBudget();
 
+    /**
+     * Updates the current budget amount for the authenticated user.
+     *
+     * <p>This method retrieves the current user's ID and period, updates the budget amount
+     * in a transactional context, and fetches the updated budget details to return as a DTO.
+     * If the budget does not exist for the given user and period, an exception is thrown.
+     *
+     * @param amount the new budget amount to set.
+     * @return a {@link BudgetResponseDTO} containing details of the updated budget.
+     * @throws PeridotNotFoundException if the budget does not exist for the given user and period.
+     *
+     */
     BudgetResponseDTO updateCurrentBudget(BigDecimal amount);
 }

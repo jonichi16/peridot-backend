@@ -55,7 +55,9 @@ public class BudgetController {
                 createUpdateBudgetDTO.amount()
         );
 
-        BudgetResponseDTO budgetResponseDTO = budgetService.createBudget(createUpdateBudgetDTO.amount());
+        BudgetResponseDTO budgetResponseDTO = budgetService.createBudget(
+                createUpdateBudgetDTO.amount()
+        );
 
         HttpStatus status = HttpStatus.CREATED;
         ApiResponse<BudgetResponseDTO> response = SuccessResponse.<BudgetResponseDTO>builder()
@@ -100,6 +102,16 @@ public class BudgetController {
         return ResponseEntity.status(status).body(response);
     }
 
+    /**
+     * Updates the current budget with the provided details.
+     *
+     * <p>This method handles an HTTP PUT request to update the current budget's amount.
+     * It validates the input, updates the budget through the service layer, and returns
+     * a response indicating success.
+     *
+     * @param createUpdateBudgetDTO the request payload containing the budget amount
+     * @return a response entity containing the updated budget and a success message
+     */
     @PutMapping("/current")
     public ResponseEntity<ApiResponse<BudgetResponseDTO>> updateCurrentBudget(
             @RequestBody @Valid CreateUpdateBudgetDTO createUpdateBudgetDTO
