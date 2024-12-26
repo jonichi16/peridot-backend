@@ -121,7 +121,13 @@ public class BudgetIntegrationTest {
     @Test
     @WithMockUser
     public void updateCurrentBudget_shouldReturn200Ok() throws Exception {
-        mockMvc.perform(put("/api/budgets/current"))
+        CreateUpdateBudgetDTO createUpdateBudgetDTO = CreateUpdateBudgetDTO.builder()
+                .amount(new BigDecimal("1000"))
+                .build();
+
+        mockMvc.perform(put("/api/budgets/current")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createUpdateBudgetDTO)))
                 .andExpect(status().isOk());
     }
 

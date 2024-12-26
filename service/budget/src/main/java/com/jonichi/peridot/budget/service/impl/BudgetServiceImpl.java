@@ -81,4 +81,9 @@ public class BudgetServiceImpl implements BudgetService {
                 .status(budget.getStatus())
                 .build();
     }
+
+    @Override
+    public BudgetResponseDTO updateCurrentBudget() {
+        return null;
+    }
 }
