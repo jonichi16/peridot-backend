@@ -27,6 +27,6 @@ public interface EnvelopeService {
             String name,
             String description,
             BigDecimal amount,
-            boolean recurring
+            Boolean recurring
     );
 }
