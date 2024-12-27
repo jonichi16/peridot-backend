@@ -1,0 +1,48 @@
+= Peridot API Documentation
+:toc: left
+
+== Authentication API
+
+=== Register
+`POST /api/auth/register`
+
+Register a new user in the system.
+
+==== Request
+
+include::{snippets}/registerSuccess/http-request.adoc[]
+
+==== Success Response
+
+include::{snippets}/registerSuccess/http-response.adoc[]
+
+==== Error Responses
+
+* Invalid Request:
+include::{snippets}/invalidRequest/http-response.adoc[]
+
+* Duplicate Username:
+include::{snippets}/duplicateUsername/http-response.adoc[]
+
+'''
+
+=== Authenticate
+`POST /api/auth/authenticate`
+
+Authenticate an existing user.
+
+==== Request
+
+include::{snippets}/authenticate/http-request.adoc[]
+
+==== Success Response
+
+include::{snippets}/authenticate/http-response.adoc[]
+
+==== Error Responses
+
+* Unauthorized Access:
+include::{snippets}/unauthorized/http-response.adoc[]
+
+* Invalid Request:
+include::{snippets}/authenticateInvalidRequest/http-response.adoc[]
