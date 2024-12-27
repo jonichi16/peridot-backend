@@ -30,6 +30,11 @@
             <artifactId>budget</artifactId>
             <version>0.0.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.jonichi.peridot</groupId>
+            <artifactId>envelope</artifactId>
+            <version>0.0.1</version>
+        </dependency>
     </dependencies>
 
     <build>
