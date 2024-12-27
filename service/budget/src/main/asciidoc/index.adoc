@@ -1,0 +1,55 @@
+= Peridot Budget API Documentation
+:toc: left
+
+== Budget API
+
+=== Create Budget
+`POST /api/budgets`
+
+Create new budget for the current period.
+
+==== Request
+
+include::{snippets}/createBudgetSuccess/request-body.adoc[]
+
+==== Success Response
+
+include::{snippets}/createBudgetSuccess/response-body.adoc[]
+
+==== Error Responses
+
+* Invalid Request:
+include::{snippets}/createBudgetMissingFields/response-body.adoc[]
+
+* Duplicate Username:
+include::{snippets}/createBudgetInvalidRequest/response-body.adoc[]
+
+'''
+
+=== Get Current Budget
+`GET /api/budgets/current`
+
+Retrieve the current period's budget.
+
+==== Request
+
+include::{snippets}/getCurrentBudget/request-body.adoc[]
+
+==== Success Response
+
+include::{snippets}/getCurrentBudget/response-body.adoc[]
+
+'''
+
+=== Update Current Budget
+`PUT /api/budgets/current`
+
+Update the current period's budget.
+
+==== Request
+
+include::{snippets}/updateCurrentBudget/request-body.adoc[]
+
+==== Success Response
+
+include::{snippets}/updateCurrentBudget/response-body.adoc[]
