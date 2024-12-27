@@ -16,6 +16,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * REST controller for managing envelopes.
+ *
+ * <p>This controller handles API endpoints related to envelope management, including creating
+ * envelopes. It interacts with the service layer to perform business operations.</p>
+ */
 @RestController
 @RequestMapping("/api/envelopes")
 @RequiredArgsConstructor
@@ -24,6 +30,17 @@ public class EnvelopeController {
     private static final Logger logger = LoggerFactory.getLogger(EnvelopeController.class);
     private final EnvelopeService envelopeService;
 
+    /**
+     * Creates a new envelope.
+     *
+     * <p>This endpoint handles HTTP POST requests to create a new envelope. The request body must
+     * contain a valid {@link CreateEnvelopeDTO}. The created envelope's details are returned
+     * in the response.</p>
+     *
+     * @param createEnvelopeDTO the DTO containing details for the new envelope.
+     * @return a {@link ResponseEntity} containing an {@link ApiResponse} with the created envelope
+     *         details in {@link EnvelopeResponseDTO} and an HTTP status of 201 (Created).
+     */
     @PostMapping("")
     public ResponseEntity<ApiResponse<EnvelopeResponseDTO>> createEnvelope(
             @RequestBody @Valid CreateEnvelopeDTO createEnvelopeDTO
