@@ -44,7 +44,7 @@ case "$1" in
         ;;
     docs)
         echo "Generating API documentation..."
-        mvn clean package
+        mvn clean package -Dtest=*IntegrationTest -Djacoco.skip=true -Dsurefire.failIfNoSpecifiedTests=false
 
         echo "✅  API documentation generated successfully."
         ;;
