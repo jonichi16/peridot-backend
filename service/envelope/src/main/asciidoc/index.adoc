@@ -1,0 +1,19 @@
+= Peridot Envelope API Documentation
+:toc: left
+
+== Envelope API
+
+=== Create Envelope
+`POST /api/envelopes`
+
+Create new envelope for the current budget.
+
+==== Request
+
+include::{snippets}/createEnvelopeSuccess/request-body.adoc[]
+
+==== Success Response
+
+include::{snippets}/createEnvelopeSuccess/response-body.adoc[]
+
+==== Error Responses
