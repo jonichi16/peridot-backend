@@ -2,6 +2,8 @@ package com.jonichi.peridot.envelope.service.impl;
 
 import com.jonichi.peridot.common.util.TransactionalHandler;
 import com.jonichi.peridot.envelope.dto.EnvelopeResponseDTO;
+import com.jonichi.peridot.envelope.repository.BudgetEnvelopeRepository;
+import com.jonichi.peridot.envelope.repository.EnvelopeRepository;
 import java.math.BigDecimal;
 import java.util.function.Supplier;
 import org.junit.jupiter.api.Test;
@@ -16,7 +18,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 public class EnvelopeServiceImplTest {
-    
+
+    @Mock
+    private EnvelopeRepository envelopeRepository;
+    @Mock
+    private BudgetEnvelopeRepository budgetEnvelopeRepository;
     @Mock
     private TransactionalHandler transactionalHandler;
     @InjectMocks
