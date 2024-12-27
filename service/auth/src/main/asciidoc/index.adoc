@@ -1,4 +1,4 @@
-= Peridot API Documentation
+= Peridot Auth API Documentation
 :toc: left
 
 == Authentication API
@@ -10,19 +10,19 @@ Register a new user in the system.
 
 ==== Request
 
-include::{snippets}/registerSuccess/http-request.adoc[]
+include::{snippets}/registerSuccess/request-body.adoc[]
 
 ==== Success Response
 
-include::{snippets}/registerSuccess/http-response.adoc[]
+include::{snippets}/registerSuccess/response-body.adoc[]
 
 ==== Error Responses
 
 * Invalid Request:
-include::{snippets}/invalidRequest/http-response.adoc[]
+include::{snippets}/invalidRequest/response-body.adoc[]
 
 * Duplicate Username:
-include::{snippets}/duplicateUsername/http-response.adoc[]
+include::{snippets}/duplicateUsername/response-body.adoc[]
 
 '''
 
@@ -33,16 +33,16 @@ Authenticate an existing user.
 
 ==== Request
 
-include::{snippets}/authenticate/http-request.adoc[]
+include::{snippets}/authenticate/request-body.adoc[]
 
 ==== Success Response
 
-include::{snippets}/authenticate/http-response.adoc[]
+include::{snippets}/authenticate/response-body.adoc[]
 
 ==== Error Responses
 
 * Unauthorized Access:
-include::{snippets}/unauthorized/http-response.adoc[]
+include::{snippets}/unauthorized/response-body.adoc[]
 
 * Invalid Request:
-include::{snippets}/authenticateInvalidRequest/http-response.adoc[]
+include::{snippets}/authenticateInvalidRequest/response-body.adoc[]

@@ -2,6 +2,7 @@ package com.jonichi.peridot.auth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jonichi.peridot.auth.config.SecurityConfig;
+import com.jonichi.peridot.auth.dto.AuthTokenDTO;
 import com.jonichi.peridot.auth.dto.AuthenticateRequestDTO;
 import com.jonichi.peridot.auth.dto.RegisterRequestDTO;
 import com.jonichi.peridot.auth.repository.UserRepository;
@@ -53,6 +54,17 @@ public class AuthIntegrationTest {
                 .email(email)
                 .password(password)
                 .build();
+
+        AuthTokenDTO authTokenDTO = AuthTokenDTO.builder()
+                .userId(1)
+                .accessToken("sampleJwtToken")
+                .build();
+
+        when(authService.register(
+                registerRequestDTO.username(),
+                registerRequestDTO.email(),
+                registerRequestDTO.password()
+        )).thenReturn(authTokenDTO);
 
         mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -180,6 +192,16 @@ public class AuthIntegrationTest {
         String password = "secret";
 
         AuthenticateRequestDTO authenticateRequestDTO = new AuthenticateRequestDTO(username, password);
+
+        AuthTokenDTO authTokenDTO = AuthTokenDTO.builder()
+                .userId(1)
+                .accessToken("sampleJwtToken")
+                .build();
+
+        when(authService.authenticate(
+                authenticateRequestDTO.username(),
+                authenticateRequestDTO.password()
+        )).thenReturn(authTokenDTO);
 
         mockMvc.perform(post("/api/auth/authenticate")
                         .contentType(MediaType.APPLICATION_JSON)
