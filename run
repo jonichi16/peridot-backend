@@ -6,10 +6,11 @@ set -euf -o pipefail
 # Display usage information
 usage() {
     echo ""
-    echo "Usage: $0 {lint|dev|build|logs|stop}"
+    echo "Usage: $0 {lint|docs|dev|build|logs|stop}"
     echo ""
     echo "Available commands:"
     echo "  lint  - Run code quality checks (Checkstyle, PMD, SpotBugs)"
+    echo "  docs  - Generate API documentation"
     echo "  dev   - Start development environment with PostgreSQL only"
     echo "  build - Build and start the application (production setup)"
     echo "  logs  - Follow logs for the 'app' service"
@@ -44,6 +45,12 @@ case "$1" in
         mvn clean
 
         echo "✅  Code quality checks completed successfully."
+        ;;
+    docs)
+        echo "Generating API documentation..."
+        mvn clean package
+
+        echo "✅  API documentation generated successfully."
         ;;
     dev)
         echo "Starting development environment with PostgreSQL only..."
