@@ -6,10 +6,11 @@ set -euf -o pipefail
 # Display usage information
 usage() {
     echo ""
-    echo "Usage: $0 {lint}"
+    echo "Usage: $0 {lint|docs}"
     echo ""
     echo "Available commands:"
     echo "  lint  - Run code quality checks (Checkstyle, PMD, SpotBugs)"
+    echo "  docs  - Generate API documentation"
     echo ""
     exit 1
 }
@@ -40,6 +41,12 @@ case "$1" in
         mvn clean
 
         echo "✅  Code quality checks completed successfully."
+        ;;
+    docs)
+        echo "Generating API documentation..."
+        mvn clean package
+
+        echo "✅  API documentation generated successfully."
         ;;
     *)
         echo "Error: Invalid command '$1'"
