@@ -44,7 +44,7 @@ public class EnvelopeIntegrationTest {
 
     @Test
     @WithMockUser
-    public void createEnvelope_shouldReturn200OK() throws Exception {
+    public void createEnvelope_shouldReturn201Created() throws Exception {
         // given
         BigDecimal amount = new BigDecimal("500.00");
         CreateEnvelopeDTO createEnvelopeDTO = CreateEnvelopeDTO.builder()
@@ -71,9 +71,53 @@ public class EnvelopeIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createEnvelopeDTO)))
                 .andDo(print())
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andDo(
                         document("createEnvelopeSuccess",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint())
+                        )
+                );
+    }
+
+    @Test
+    @WithMockUser
+    public void createEnvelope_withMissingFields_shouldReturn400BadRequestError() throws Exception {
+        // given
+        String invalidRequest = "{ }";
+
+        // when
+
+        // then
+        mockMvc.perform(post("/api/envelopes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(invalidRequest))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andDo(
+                        document("createEnvelopesMissingFields",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint())
+                        )
+                );
+    }
+
+    @Test
+    @WithMockUser
+    public void createEnvelope_withLessThanZeroAmount_shouldReturn400BadRequestError() throws Exception {
+        // given
+        String invalidRequest = "{ \"amount\": \"-1.00\" }";
+
+        // when
+
+        // then
+        mockMvc.perform(post("/api/envelopes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(invalidRequest))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andDo(
+                        document("createEnvelopeInvalidRequest",
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint())
                         )
