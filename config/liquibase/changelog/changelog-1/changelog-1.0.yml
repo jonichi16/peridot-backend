@@ -20,13 +20,13 @@ databaseChangeLog:
                     unique: true
                     uniqueConstraintName: reference_code_unique
               - column:
-                  name: description
-                  type: TEXT
-              - column:
                   name: category
                   type: VARCHAR(50)
                   constraints:
                     nullable: false
+              - column:
+                  name: description
+                  type: TEXT
   - changeSet:
       id: 1.0.0-tag
       author: jonichi
@@ -50,6 +50,30 @@ databaseChangeLog:
               - column:
                   name: category
                   value: USER_ROLE
+        - insert:
+            tableName: reference_code
+            columns:
+              - column:
+                  name: code
+                  value: SYSTEM_STATUS_ACTIVE
+              - column:
+                  name: description
+                  value: Active
+              - column:
+                  name: category
+                  value: SYSTEM_STATUS
+        - insert:
+            tableName: reference_code
+            columns:
+              - column:
+                  name: code
+                  value: SYSTEM_STATUS_INACTIVE
+              - column:
+                  name: description
+                  value: Inactive
+              - column:
+                  name: category
+                  value: SYSTEM_STATUS
         - insert:
             tableName: reference_code
             columns:
@@ -86,6 +110,42 @@ databaseChangeLog:
               - column:
                   name: category
                   value: BUDGET_STATUS
+        - insert:
+            tableName: reference_code
+            columns:
+              - column:
+                  name: code
+                  value: ENVELOPE_STATUS_UNDER
+              - column:
+                  name: description
+                  value: Status when envelope amount is more than expenses
+              - column:
+                  name: category
+                  value: ENVELOPE_STATUS
+        - insert:
+            tableName: reference_code
+            columns:
+              - column:
+                  name: code
+                  value: ENVELOPE_STATUS_FULL
+              - column:
+                  name: description
+                  value: Status when envelope amount is equal to expenses
+              - column:
+                  name: category
+                  value: ENVELOPE_STATUS
+        - insert:
+            tableName: reference_code
+            columns:
+              - column:
+                  name: code
+                  value: ENVELOPE_STATUS_EXCEEDED
+              - column:
+                  name: description
+                  value: Status when envelope amount is less than expenses
+              - column:
+                  name: category
+                  value: ENVELOPE_STATUS
   - changeSet:
       id: 1.0.1-tag
       author: jonichi
