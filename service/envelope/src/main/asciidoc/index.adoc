@@ -17,3 +17,9 @@ include::{snippets}/createEnvelopeSuccess/request-body.adoc[]
 include::{snippets}/createEnvelopeSuccess/response-body.adoc[]
 
 ==== Error Responses
+
+* Missing Fields:
+include::{snippets}/createEnvelopesMissingFields/response-body.adoc[]
+
+* Invalid Request:
+include::{snippets}/createEnvelopeInvalidRequest/response-body.adoc[]
