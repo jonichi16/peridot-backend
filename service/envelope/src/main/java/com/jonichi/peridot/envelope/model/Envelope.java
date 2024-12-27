@@ -18,6 +18,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
+/**
+ * Entity class representing an envelope.
+ *
+ * <p>This class maps to the {@code envelope} table in the database and represents an envelope
+ * that can be associated with a user's budget. It contains details such as the envelope's name,
+ * description, status, and timestamps for creation and updates. A unique constraint ensures that
+ * each envelope name is unique per user.</p>
+ */
 @Data
 @Builder
 @NoArgsConstructor

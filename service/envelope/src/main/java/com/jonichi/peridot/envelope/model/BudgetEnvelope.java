@@ -17,6 +17,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
+/**
+ * Entity class representing a budget envelope.
+ *
+ * <p>This class maps to the {@code budget_envelope} table in the database. It represents the
+ * association between a budget and an envelope, including details such as the amount,
+ * recurrence status, and the envelope's current status. Timestamps for creation and updates
+ * are automatically managed.</p>
+ */
 @Data
 @Builder
 @NoArgsConstructor
