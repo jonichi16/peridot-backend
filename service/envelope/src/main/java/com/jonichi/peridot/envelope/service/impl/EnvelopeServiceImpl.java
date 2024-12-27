@@ -16,6 +16,13 @@ import java.util.function.Supplier;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/**
+ * Implementation of the {@link EnvelopeService} interface for managing envelopes.
+ *
+ * <p>This service handles the creation of envelopes and associated budget envelopes. It
+ * interacts with the repository layer to persist envelope and budget envelope details in
+ * the database. A transaction is used to ensure that the operations are atomic.</p>
+ */
 @Service
 @RequiredArgsConstructor
 public class EnvelopeServiceImpl implements EnvelopeService {
