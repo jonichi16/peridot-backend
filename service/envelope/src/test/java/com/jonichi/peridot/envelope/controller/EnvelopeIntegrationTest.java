@@ -3,6 +3,7 @@ package com.jonichi.peridot.envelope.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jonichi.peridot.auth.config.SecurityConfig;
 import com.jonichi.peridot.auth.repository.UserRepository;
+import com.jonichi.peridot.budget.repository.BudgetRepository;
 import com.jonichi.peridot.envelope.dto.CreateEnvelopeDTO;
 import com.jonichi.peridot.envelope.dto.EnvelopeResponseDTO;
 import com.jonichi.peridot.envelope.service.EnvelopeService;
@@ -36,6 +37,8 @@ public class EnvelopeIntegrationTest {
     private MockMvc mockMvc;
     @MockBean
     private UserRepository userRepository;
+    @MockBean
+    private BudgetRepository budgetRepository;
     @MockBean
     private EnvelopeService envelopeService;
 

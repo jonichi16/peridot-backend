@@ -25,7 +25,6 @@ import org.hibernate.annotations.CreationTimestamp;
 @Table(name = "budget_envelope")
 public class BudgetEnvelope {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "budget_envelope_sequence")
     @SequenceGenerator(
