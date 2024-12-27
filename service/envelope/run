@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# Exit immediately if a command exits with a non-zero status, an unset variable is used, or a pipeline fails
+set -euf -o pipefail
+
+# Display usage information
+usage() {
+    echo ""
+    echo "Usage: $0 {lint|docs}"
+    echo ""
+    echo "Available commands:"
+    echo "  lint  - Run code quality checks (Checkstyle, PMD, SpotBugs)"
+    echo "  docs  - Generate API documentation"
+    echo ""
+    exit 1
+}
+
+# Check if an argument is provided
+if [[ $# -eq 0 ]]; then
+    echo "Error: No command provided."
+    usage
+fi
+
+case "$1" in
+    lint)
+        echo "Starting code quality checks..."
+
+        echo "Step 1: Cleaning previous build artifacts..."
+        mvn clean
+
+        echo "Step 2: Running Checkstyle..."
+        mvn checkstyle:check -ntp
+
+        echo "Step 3: Running PMD analysis..."
+        mvn pmd:check -ntp
+
+        echo "Step 4: Running SpotBugs analysis..."
+        mvn spotbugs:check -ntp
+
+        echo "Step 5: Cleaning up after checks..."
+        mvn clean
+
+        echo "✅  Code quality checks completed successfully."
+        ;;
+    docs)
+        echo "Generating API documentation..."
+        mvn clean package
+
+        echo "✅  API documentation generated successfully."
+        ;;
+    *)
+        echo "Error: Invalid command '$1'"
+        usage
+        ;;
+esac
