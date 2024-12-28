@@ -3,6 +3,7 @@ package com.jonichi.peridot.envelope.service.impl;
 import com.jonichi.peridot.budget.model.Budget;
 import com.jonichi.peridot.budget.service.BudgetContextService;
 import com.jonichi.peridot.common.dto.UserBudgetDTO;
+import com.jonichi.peridot.common.exception.PeridotDuplicateException;
 import com.jonichi.peridot.common.model.SystemStatus;
 import com.jonichi.peridot.common.util.TransactionalHandler;
 import com.jonichi.peridot.envelope.dto.EnvelopeResponseDTO;
@@ -14,6 +15,7 @@ import com.jonichi.peridot.envelope.repository.EnvelopeRepository;
 import java.math.BigDecimal;
 import java.util.function.Supplier;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
@@ -23,6 +25,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 
 @ExtendWith(MockitoExtension.class)
 public class EnvelopeServiceImplTest {
@@ -39,7 +42,7 @@ public class EnvelopeServiceImplTest {
     private EnvelopeServiceImpl envelopeServiceImpl;
 
     @Test
-    public void createEnvelope_should() throws Exception {
+    public void createEnvelope_shouldCReturnEnvelope() throws Exception {
         // given
         String name = "Sample";
         String description = "This is sample envelope";
@@ -97,5 +100,41 @@ public class EnvelopeServiceImplTest {
         verify(budgetEnvelopeRepository, times(1)).save(budgetEnvelopeRequest);
         assertThat(response.envelopeId()).isEqualTo(1);
         assertThat(response.budgetEnvelopeId()).isEqualTo(1);
+    }
+
+    @Test
+    public void createEnvelope_withDuplicate_shouldThrowPeridotDuplicateException() throws Exception {
+        // given
+        String name = "Sample";
+        String description = "This is sample envelope";
+        BigDecimal amount = new BigDecimal("1000");
+
+        // when
+        when(budgetContextService.getCurrentUserBudgetId()).thenReturn(
+                UserBudgetDTO.builder()
+                        .budgetId(1)
+                        .userId(1)
+                        .build()
+        );
+        when(envelopeRepository.save(any(Envelope.class)))
+                .thenThrow(
+                        new DataIntegrityViolationException(
+                                "Detail: Key (user_id, name)=(1, Sample) already exists."
+                        )
+                );
+        when(transactionalHandler.runInTransactionSupplier(any(Supplier.class)))
+                .thenAnswer(invocation -> {
+                    Supplier<EnvelopeResponseDTO> supplier = invocation.getArgument(0);
+                    return supplier.get();
+                });
+
+        // then
+        assertThatThrownBy(() -> envelopeServiceImpl.createEnvelope(
+                name,
+                description,
+                amount,
+                true
+        )).isInstanceOf(PeridotDuplicateException.class)
+                .hasMessage("Envelope already exists");
     }
 }
