@@ -21,5 +21,14 @@ public interface BudgetContextService {
      */
     UserBudgetDTO getCurrentUserBudgetId();
 
+    /**
+     * Updates the total expenses of a budget.
+     *
+     * <p>This method updates the total expenses for a specific budget identified
+     * by its unique ID.</p>
+     *
+     * @param budgetId the unique identifier of the budget to update.
+     * @param totalExpenses the new total expenses to set for the budget.
+     */
     void updateBudgetStatus(Integer budgetId, BigDecimal totalExpenses);
 }
