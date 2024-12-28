@@ -86,21 +86,6 @@ public class BudgetRepositoryTest {
         registry.add("spring.datasource.password", POSTGRES_CONTAINER::getPassword);
     }
 
-    @BeforeEach
-    public void setUpTestData() {
-        Budget budget = createTestBudget();
-        budgetRepository.saveAndFlush(budget);
-    }
-
-    private Budget createTestBudget() {
-        return Budget.builder()
-                .userId(1)
-                .amount(new BigDecimal("1000"))
-                .period(LocalDate.of(2024, 12, 1))
-                .status(BudgetStatus.BUDGET_STATUS_INCOMPLETE)
-                .build();
-    }
-
     @AfterEach
     public void cleanUp() {
         budgetRepository.deleteAll();
