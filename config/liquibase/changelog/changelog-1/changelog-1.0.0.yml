@@ -259,6 +259,36 @@ databaseChangeLog:
             sql: "SELECT setval('_user_sequence', (SELECT MAX(id) FROM _user));"
 
   - changeSet:
+      id: test-data-1.0.1
+      author: jonichi
+      context: dev, test
+      changes:
+        - insert:
+            tableName: _user
+            columns:
+              - column:
+                  name: id
+                  value: 2
+              - column:
+                  name: username
+                  value: testuser
+              - column:
+                  name: email
+                  value: testuser@mail.com
+              - column:
+                  name: password
+                  value: $2a$12$q8TAcKs7mjnXPI7/MOWnU.cTpYpwJZe/OuBbrAVw13.aA6MjO6l32
+              - column:
+                  name: role
+                  value: USER_ROLE_ACCOUNT
+              - column:
+                  name: created_date
+                  valueComputed: CURRENT_TIMESTAMP
+        - sql:
+            comment: "Resynchronize _user_sequence"
+            sql: "SELECT setval('_user_sequence', (SELECT MAX(id) FROM _user));"
+
+  - changeSet:
       id: 1.0.4
       author: jonichi
       changes:
