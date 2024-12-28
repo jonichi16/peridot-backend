@@ -2,11 +2,13 @@ package com.jonichi.peridot.budget.service.impl;
 
 import com.jonichi.peridot.auth.service.AuthContextService;
 import com.jonichi.peridot.budget.model.Budget;
+import com.jonichi.peridot.budget.model.BudgetStatus;
 import com.jonichi.peridot.budget.repository.BudgetRepository;
 import com.jonichi.peridot.budget.service.BudgetContextService;
 import com.jonichi.peridot.common.dto.UserBudgetDTO;
 import com.jonichi.peridot.common.exception.PeridotNotFoundException;
 import com.jonichi.peridot.common.util.DateUtil;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,5 +38,19 @@ public class BudgetContextServiceImpl implements BudgetContextService {
                 .userId(userId)
                 .budgetId(budget.getId())
                 .build();
+    }
+
+    @Override
+    public void updateBudgetStatus(Integer budgetId, BigDecimal totalExpenses) {
+        BudgetStatus updatedStatus = BudgetStatus.BUDGET_STATUS_INCOMPLETE;
+        BigDecimal budgetAmount = budgetRepository.getReferenceById(budgetId).getAmount();
+
+        if (budgetAmount.compareTo(totalExpenses) == 0) {
+            updatedStatus = BudgetStatus.BUDGET_STATUS_COMPLETE;
+        } else if (budgetAmount.compareTo(totalExpenses) < 0) {
+            updatedStatus = BudgetStatus.BUDGET_STATUS_INVALID;
+        }
+
+        budgetRepository.updateBudgetStatus(budgetId, updatedStatus);
     }
 }
