@@ -1,7 +1,12 @@
 package com.jonichi.peridot.envelope.repository;
 
+import com.jonichi.peridot.budget.model.Budget;
+import com.jonichi.peridot.budget.model.BudgetStatus;
+import com.jonichi.peridot.budget.repository.BudgetRepository;
+import com.jonichi.peridot.common.model.SystemStatus;
 import com.jonichi.peridot.envelope.model.BudgetEnvelope;
 import com.jonichi.peridot.envelope.model.BudgetEnvelopeStatus;
+import com.jonichi.peridot.envelope.model.Envelope;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.io.File;
@@ -9,6 +14,7 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 import liquibase.Liquibase;
 import liquibase.database.Database;
@@ -35,6 +41,10 @@ public class BudgetEnvelopeRepositoryTest {
 
     @Autowired
     private BudgetEnvelopeRepository budgetEnvelopeRepository;
+    @Autowired
+    private BudgetRepository budgetRepository;
+    @Autowired
+    private EnvelopeRepository envelopeRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -87,9 +97,30 @@ public class BudgetEnvelopeRepositoryTest {
 
     @BeforeEach
     public void setUpTestData() {
+        budgetRepository.saveAndFlush(
+                Budget.builder()
+                        .userId(1)
+                        .amount(BigDecimal.valueOf(10000))
+                        .period(LocalDate.of(2024, 12, 1))
+                        .status(BudgetStatus.BUDGET_STATUS_INCOMPLETE)
+                        .build()
+        );
+        envelopeRepository.saveAllAndFlush(List.of(
+           createTestEnvelope("Test 1"),
+           createTestEnvelope("Test 2")
+        ));
+
         BudgetEnvelope budgetEnvelope1 = createTestBudgetEnvelope(1, new BigDecimal("1000"));
         BudgetEnvelope budgetEnvelope2 = createTestBudgetEnvelope(2, new BigDecimal("500"));
         budgetEnvelopeRepository.saveAllAndFlush(List.of(budgetEnvelope1, budgetEnvelope2));
+    }
+
+    private Envelope createTestEnvelope(String name) {
+        return Envelope.builder()
+                .userId(1)
+                .name(name)
+                .status(SystemStatus.SYSTEM_STATUS_ACTIVE)
+                .build();
     }
 
     private BudgetEnvelope createTestBudgetEnvelope(
