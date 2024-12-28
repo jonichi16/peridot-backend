@@ -139,7 +139,7 @@ databaseChangeLog:
             tag: 1.0.8
 
   - changeSet:
-      id: 1.0.3
+      id: 1.0.9
       author: jonichi
       changes:
         - addForeignKeyConstraint:
@@ -161,8 +161,92 @@ databaseChangeLog:
             referencedTableName: reference_code
             referencedColumnNames: code
   - changeSet:
-      id: 1.0.3-tag
+      id: 1.0.9-tag
       author: jonichi
       changes:
         - tagDatabase:
-            tag: 1.0.3
+            tag: 1.0.9
+
+  - changeSet:
+      id: test-data-1.0.1
+      author: jonichi
+      context: dev, test
+      changes:
+        - insert:
+            tableName: budget
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: user_id
+                  value: 1
+              - column:
+                  name: amount
+                  value: 22500.00
+              - column:
+                  name: period
+                  value: 2024-12-1
+              - column:
+                  name: status
+                  value: BUDGET_STATUS_INCOMPLETE
+              - column:
+                  name: created_date
+                  valueComputed: CURRENT_TIMESTAMP
+        - sql:
+            comment: "Resynchronize budget_sequence"
+            sql: "SELECT setval('budget_sequence', (SELECT MAX(id) FROM budget));"
+
+  - changeSet:
+      id: test-data-1.0.2
+      author: jonichi
+      context: dev, test
+      changes:
+        - insert:
+            tableName: envelope
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: user_id
+                  value: 1
+              - column:
+                  name: name
+                  value: Test Envelope 1
+              - column:
+                  name: status
+                  value: SYSTEM_STATUS_ACTIVE
+              - column:
+                  name: created_date
+                  valueComputed: CURRENT_TIMESTAMP
+        - sql:
+            comment: "Resynchronize envelope_sequence"
+            sql: "SELECT setval('envelope_sequence', (SELECT MAX(id) FROM envelope));"
+
+  - changeSet:
+      id: test-data-1.0.3
+      author: jonichi
+      context: dev, test
+      changes:
+        - insert:
+            tableName: envelope
+            columns:
+              - column:
+                  name: id
+                  value: 2
+              - column:
+                  name: user_id
+                  value: 1
+              - column:
+                  name: name
+                  value: Test Envelope 2
+              - column:
+                  name: status
+                  value: SYSTEM_STATUS_ACTIVE
+              - column:
+                  name: created_date
+                  valueComputed: CURRENT_TIMESTAMP
+        - sql:
+            comment: "Resynchronize envelope_sequence"
+            sql: "SELECT setval('envelope_sequence', (SELECT MAX(id) FROM envelope));"
