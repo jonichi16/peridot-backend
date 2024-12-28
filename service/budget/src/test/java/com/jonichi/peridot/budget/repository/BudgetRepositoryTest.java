@@ -19,6 +19,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -83,6 +84,21 @@ public class BudgetRepositoryTest {
         registry.add("spring.datasource.url", POSTGRES_CONTAINER::getJdbcUrl);
         registry.add("spring.datasource.username", POSTGRES_CONTAINER::getUsername);
         registry.add("spring.datasource.password", POSTGRES_CONTAINER::getPassword);
+    }
+
+    @BeforeEach
+    public void setUpTestData() {
+        Budget budget = createTestBudget();
+        budgetRepository.saveAndFlush(budget);
+    }
+
+    private Budget createTestBudget() {
+        return Budget.builder()
+                .userId(1)
+                .amount(BigDecimal.valueOf(22000))
+                .period(LocalDate.of(2024, 12, 1))
+                .status(BudgetStatus.BUDGET_STATUS_INCOMPLETE)
+                .build();
     }
 
     @AfterEach
