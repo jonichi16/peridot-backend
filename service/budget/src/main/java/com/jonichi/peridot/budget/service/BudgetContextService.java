@@ -1,6 +1,7 @@
 package com.jonichi.peridot.budget.service;
 
 import com.jonichi.peridot.common.dto.UserBudgetDTO;
+import java.math.BigDecimal;
 
 /**
  * Service interface for managing the context of a user's budget.
@@ -19,4 +20,6 @@ public interface BudgetContextService {
      * @return a {@link UserBudgetDTO} containing the current user's budget ID.
      */
     UserBudgetDTO getCurrentUserBudgetId();
+
+    void updateBudgetStatus(Integer budgetId, BigDecimal totalExpenses);
 }
