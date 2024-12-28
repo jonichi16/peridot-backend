@@ -67,6 +67,14 @@ public class EnvelopeServiceImpl implements EnvelopeService {
                             .build()
                 );
 
+                BigDecimal totalExpenses = budgetEnvelopeRepository
+                        .getTotalExpenses(userBudgetDTO.budgetId());
+
+                budgetContextService.updateBudgetStatus(
+                        userBudgetDTO.budgetId(),
+                        totalExpenses
+                );
+
                 return EnvelopeResponseDTO.builder()
                         .envelopeId(envelope.getId())
                         .budgetEnvelopeId(budgetEnvelope.getId())
