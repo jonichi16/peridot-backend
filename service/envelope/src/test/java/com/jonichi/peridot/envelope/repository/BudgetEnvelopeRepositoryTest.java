@@ -1,7 +1,7 @@
-package com.jonichi.peridot.budget.repository;
+package com.jonichi.peridot.envelope.repository;
 
-import com.jonichi.peridot.budget.model.Budget;
-import com.jonichi.peridot.budget.model.BudgetStatus;
+import com.jonichi.peridot.envelope.model.BudgetEnvelope;
+import com.jonichi.peridot.envelope.model.BudgetEnvelopeStatus;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.io.File;
@@ -9,8 +9,7 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.util.Optional;
+import java.util.List;
 import liquibase.Liquibase;
 import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
@@ -19,6 +18,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -31,10 +31,10 @@ import org.testcontainers.containers.PostgreSQLContainer;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ActiveProfiles("test")
-public class BudgetRepositoryTest {
+public class BudgetEnvelopeRepositoryTest {
 
     @Autowired
-    private BudgetRepository budgetRepository;
+    private BudgetEnvelopeRepository budgetEnvelopeRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -85,64 +85,41 @@ public class BudgetRepositoryTest {
         registry.add("spring.datasource.password", POSTGRES_CONTAINER::getPassword);
     }
 
+    @BeforeEach
+    public void setUpTestData() {
+        BudgetEnvelope budgetEnvelope1 = createTestBudgetEnvelope(1, new BigDecimal("1000"));
+        BudgetEnvelope budgetEnvelope2 = createTestBudgetEnvelope(2, new BigDecimal("500"));
+        budgetEnvelopeRepository.saveAllAndFlush(List.of(budgetEnvelope1, budgetEnvelope2));
+    }
+
+    private BudgetEnvelope createTestBudgetEnvelope(
+            Integer envelopeId,
+            BigDecimal amount
+    ) {
+        return BudgetEnvelope.builder()
+                .budgetId(1)
+                .envelopeId(envelopeId)
+                .amount(amount)
+                .recurring(true)
+                .status(BudgetEnvelopeStatus.ENVELOPE_STATUS_UNDER)
+                .build();
+    }
+
     @AfterEach
     public void cleanUp() {
-        budgetRepository.deleteAll();
+        budgetEnvelopeRepository.deleteAll();
     }
 
     @Test
-    public void getCurrentBudget_shouldReturnTheCurrentBudget() throws Exception {
+    public void getTotalExpenses_shouldReturnCorrectTotalExpenses() throws Exception {
         // given
-        Integer userId = 1;
-        LocalDate currentPeriod = LocalDate.of(2024, 12, 1);
+        Integer budgetId = 1;
 
         // when
-        Optional<Budget> budgetDataDTO = budgetRepository.getCurrentBudget(userId, currentPeriod);
+        BigDecimal totalExpenses = budgetEnvelopeRepository.getTotalExpenses(budgetId);
 
         // then
-        assertThat(budgetDataDTO.isPresent()).isTrue();
-    }
-
-    @Test
-    public void updateCurrentBudget_shouldUpdateCurrentBudgetWithCorrectAmount() throws Exception {
-        // given
-        Integer userId = 1;
-        LocalDate currentPeriod = LocalDate.of(2024, 12, 1);
-        BigDecimal amount = new BigDecimal("5000.00");
-
-        // when
-        Budget currentBudget = budgetRepository.getCurrentBudget(userId, currentPeriod).get();
-        assertThat(currentBudget.getCreatedDate()).isNotNull();
-        assertThat(currentBudget.getUpdatedDate()).isNull();
-
-        budgetRepository.updateCurrentBudget(userId, currentPeriod, amount);
-        entityManager.flush();
-
-        Budget updatedBudget = budgetRepository.getCurrentBudget(userId, currentPeriod).get();
-        entityManager.refresh(updatedBudget);
-
-        // then
-        assertThat(updatedBudget.getUpdatedDate()).isNotNull();
-        assertThat(updatedBudget.getAmount()).isEqualTo(amount);
-    }
-
-    @Test
-    public void updateBudgetStatus_shouldUpdateTheStatusOfTheBudget() throws Exception {
-        // given
-        Integer userId = 1;
-        LocalDate currentPeriod = LocalDate.of(2024, 12, 1);
-        Budget budget = budgetRepository.getCurrentBudget(userId, currentPeriod).get();
-        BudgetStatus status = BudgetStatus.BUDGET_STATUS_COMPLETE;
-
-        // when
-        budgetRepository.updateBudgetStatus(budget.getId(), status);
-        entityManager.flush();
-
-        Budget updatedBudget = budgetRepository.getCurrentBudget(userId, currentPeriod).get();
-        entityManager.refresh(updatedBudget);
-
-        // then
-        assertThat(updatedBudget.getStatus()).isEqualTo(BudgetStatus.BUDGET_STATUS_COMPLETE);
+        assertThat(totalExpenses).isEqualTo(new BigDecimal("1500.00"));
     }
 
 }

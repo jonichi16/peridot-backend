@@ -17,7 +17,7 @@ import org.springframework.context.annotation.ComponentScan;
 public class BudgetApp {
 
     /**
-     * Main method to launch the Authentication Service application.
+     * Main method to launch the Budget Service application.
      *
      * @param args the command-line arguments passed to the application
      */

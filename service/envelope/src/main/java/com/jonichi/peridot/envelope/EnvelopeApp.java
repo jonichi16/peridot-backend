@@ -17,7 +17,7 @@ import org.springframework.context.annotation.ComponentScan;
 public class EnvelopeApp {
 
     /**
-     * Main method to launch the Authentication Service application.
+     * Main method to launch the Envelope Service application.
      *
      * @param args the command-line arguments passed to the application
      */
