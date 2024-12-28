@@ -11,6 +11,8 @@ import com.jonichi.peridot.common.util.DateUtil;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
@@ -24,16 +26,20 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class BudgetContextServiceImpl implements BudgetContextService {
 
+    private static final Logger logger = LoggerFactory.getLogger(BudgetContextServiceImpl.class);
     private final BudgetRepository budgetRepository;
     private final AuthContextService authContextService;
 
     @Override
     public UserBudgetDTO getCurrentUserBudgetId() {
+        logger.info("Start - Service - getCurrentUserBudgetId");
+
         Integer userId = authContextService.getUserId();
         LocalDate currentPeriod = DateUtil.getCurrentPeriod();
         Budget budget = budgetRepository.getCurrentBudget(userId, currentPeriod)
                 .orElseThrow(() -> new PeridotNotFoundException("Budget does not exist"));
 
+        logger.info("End - Service - getCurrentUserBudgetId");
         return UserBudgetDTO.builder()
                 .userId(userId)
                 .budgetId(budget.getId())
@@ -42,6 +48,8 @@ public class BudgetContextServiceImpl implements BudgetContextService {
 
     @Override
     public void updateBudgetStatus(Integer budgetId, BigDecimal totalExpenses) {
+        logger.info("Start - Service - updateBudgetStatus");
+
         BudgetStatus updatedStatus = BudgetStatus.BUDGET_STATUS_INCOMPLETE;
         BigDecimal budgetAmount = budgetRepository.getReferenceById(budgetId).getAmount();
 
@@ -52,5 +60,6 @@ public class BudgetContextServiceImpl implements BudgetContextService {
         }
 
         budgetRepository.updateBudgetStatus(budgetId, updatedStatus);
+        logger.info("End - Service - updateBudgetStatus");
     }
 }

@@ -70,12 +70,15 @@ public class BudgetServiceImpl implements BudgetService {
 
     @Override
     public BudgetDataDTO getCurrentBudget() {
+        logger.info("Start - Service - getCurrentBudget");
+
         Integer userId = authContextService.getUserId();
 
         Budget budget = budgetRepository
                 .getCurrentBudget(userId, DateUtil.getCurrentPeriod())
                 .orElseThrow(() -> new PeridotNotFoundException("Budget does not exist"));
 
+        logger.info("End - Service - getCurrentBudget");
         return BudgetDataDTO.builder()
                 .period(budget.getPeriod())
                 .amount(budget.getAmount())
@@ -85,6 +88,8 @@ public class BudgetServiceImpl implements BudgetService {
 
     @Override
     public BudgetResponseDTO updateCurrentBudget(BigDecimal amount) {
+        logger.info("Start - Service - updateCurrentBudget");
+
         Integer userId = authContextService.getUserId();
         LocalDate currentPeriod = DateUtil.getCurrentPeriod();
 
@@ -100,6 +105,7 @@ public class BudgetServiceImpl implements BudgetService {
                 .getCurrentBudget(userId, currentPeriod)
                 .orElseThrow(() -> new PeridotNotFoundException("Budget does not exist"));
 
+        logger.info("End - Service - updateCurrentBudget");
         return BudgetResponseDTO.builder()
                 .budgetId(budget.getId())
                 .build();
