@@ -86,6 +86,7 @@ public class EnvelopeServiceImplTest {
                     Supplier<Budget> supplier = invocation.getArgument(0);
                     return supplier.get();
                 });
+        when(budgetEnvelopeRepository.getTotalExpenses(1)).thenReturn(BigDecimal.valueOf(1000));
         EnvelopeResponseDTO response = envelopeServiceImpl.createEnvelope(
                 name,
                 description,
@@ -98,6 +99,7 @@ public class EnvelopeServiceImplTest {
         verify(transactionalHandler, times(1)).runInTransactionSupplier(any(Supplier.class));
         verify(envelopeRepository, times(1)).save(envelopeRequest);
         verify(budgetEnvelopeRepository, times(1)).save(budgetEnvelopeRequest);
+        verify(budgetContextService, times(1)).updateBudgetStatus(1, BigDecimal.valueOf(1000));
         assertThat(response.envelopeId()).isEqualTo(1);
         assertThat(response.budgetEnvelopeId()).isEqualTo(1);
     }
