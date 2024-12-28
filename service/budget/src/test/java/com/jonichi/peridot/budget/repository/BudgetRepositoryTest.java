@@ -142,4 +142,23 @@ public class BudgetRepositoryTest {
         assertThat(updatedBudget.getAmount()).isEqualTo(amount);
     }
 
+    @Test
+    public void updateBudgetStatus_shouldUpdateTheStatusOfTheBudget() throws Exception {
+        // given
+        Integer userId = 1;
+        LocalDate currentPeriod = LocalDate.of(2024, 12, 1);
+        Budget budget = budgetRepository.getCurrentBudget(userId, currentPeriod).get();
+        BudgetStatus status = BudgetStatus.BUDGET_STATUS_COMPLETE;
+
+        // when
+        budgetRepository.updateBudgetStatus(budget.getId(), status);
+        entityManager.flush();
+
+        Budget updatedBudget = budgetRepository.getCurrentBudget(userId, currentPeriod).get();
+        entityManager.refresh(updatedBudget);
+
+        // then
+        assertThat(updatedBudget.getStatus()).isEqualTo(BudgetStatus.BUDGET_STATUS_COMPLETE);
+    }
+
 }
