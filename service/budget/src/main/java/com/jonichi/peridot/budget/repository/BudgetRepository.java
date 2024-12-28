@@ -71,10 +71,17 @@ public interface BudgetRepository extends JpaRepository<Budget, Integer> {
             @Param("amount") BigDecimal amount
     );
 
+    @Transactional
+    @Modifying
     @Query(
             """
-            SELECT 1
+            UPDATE Budget b
+            SET b.status = :status, b.updatedDate = CURRENT_TIMESTAMP
+            WHERE b.id = :budgetId
             """
     )
-    void updateBudgetStatus(Integer budgetId, BudgetStatus status);
+    void updateBudgetStatus(
+            @Param("budgetId") Integer budgetId,
+            @Param("status") BudgetStatus status
+    );
 }
