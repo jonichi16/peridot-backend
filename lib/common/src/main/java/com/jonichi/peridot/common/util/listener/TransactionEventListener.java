@@ -28,6 +28,8 @@ public class TransactionEventListener {
      * </p>
      */
     public static void registerTransactionEvents() {
+        logger.info("Transaction started...");
+
         if (TransactionSynchronizationManager.isSynchronizationActive()) {
             TransactionSynchronizationManager
                     .registerSynchronization(new TransactionSynchronization() {
