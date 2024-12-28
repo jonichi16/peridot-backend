@@ -55,4 +55,70 @@ public class BudgetContextServiceImplTest {
         assertThat(userBudgetDTO.budgetId()).isEqualTo(1);
     }
 
+    @Test
+    public void updateBudgetStatus_withBudgetAllocated_shouldUpdateStatusToComplete() throws Exception {
+        // given
+        Integer budgetId = 1;
+        BigDecimal totalExpenses = new BigDecimal("1500");
+        BudgetStatus expectedStatus = BudgetStatus.BUDGET_STATUS_COMPLETE;
+        Budget budget = Budget.builder()
+                .id(1)
+                .userId(1)
+                .amount(new BigDecimal("1500"))
+                .period(LocalDate.of(2024, 12, 1))
+                .status(BudgetStatus.BUDGET_STATUS_INCOMPLETE)
+                .build();
+
+        // when
+        when(budgetRepository.getReferenceById(budgetId)).thenReturn(budget);
+        budgetContextService.updateBudgetStatus(budgetId, totalExpenses);
+
+        // then
+        verify(budgetRepository, times(1)).updateBudgetStatus(budgetId, expectedStatus);
+    }
+
+    @Test
+    public void updateBudgetStatus_withBudgetNotAllocated_shouldUpdateStatusToIncomplete() throws Exception {
+        // given
+        Integer budgetId = 1;
+        BigDecimal totalExpenses = new BigDecimal("1500");
+        BudgetStatus expectedStatus = BudgetStatus.BUDGET_STATUS_INCOMPLETE;
+        Budget budget = Budget.builder()
+                .id(1)
+                .userId(1)
+                .amount(new BigDecimal("2000"))
+                .period(LocalDate.of(2024, 12, 1))
+                .status(BudgetStatus.BUDGET_STATUS_INCOMPLETE)
+                .build();
+
+        // when
+        when(budgetRepository.getReferenceById(budgetId)).thenReturn(budget);
+        budgetContextService.updateBudgetStatus(budgetId, totalExpenses);
+
+        // then
+        verify(budgetRepository, times(1)).updateBudgetStatus(budgetId, expectedStatus);
+    }
+
+    @Test
+    public void updateBudgetStatus_withTotalExpensesExceedBudget_shouldUpdateStatusToInvalid() throws Exception {
+        // given
+        Integer budgetId = 1;
+        BigDecimal totalExpenses = new BigDecimal("5000");
+        BudgetStatus expectedStatus = BudgetStatus.BUDGET_STATUS_INVALID;
+        Budget budget = Budget.builder()
+                .id(1)
+                .userId(1)
+                .amount(new BigDecimal("2000"))
+                .period(LocalDate.of(2024, 12, 1))
+                .status(BudgetStatus.BUDGET_STATUS_INCOMPLETE)
+                .build();
+
+        // when
+        when(budgetRepository.getReferenceById(budgetId)).thenReturn(budget);
+        budgetContextService.updateBudgetStatus(budgetId, totalExpenses);
+
+        // then
+        verify(budgetRepository, times(1)).updateBudgetStatus(budgetId, expectedStatus);
+    }
+
 }

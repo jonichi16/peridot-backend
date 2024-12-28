@@ -1,6 +1,7 @@
 package com.jonichi.peridot.budget.repository;
 
 import com.jonichi.peridot.budget.model.Budget;
+import com.jonichi.peridot.budget.model.BudgetStatus;
 import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -69,4 +70,11 @@ public interface BudgetRepository extends JpaRepository<Budget, Integer> {
             @Param("period") LocalDate period,
             @Param("amount") BigDecimal amount
     );
+
+    @Query(
+            """
+            SELECT 1
+            """
+    )
+    void updateBudgetStatus(Integer budgetId, BudgetStatus status);
 }
