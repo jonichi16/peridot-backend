@@ -2,6 +2,7 @@ package com.jonichi.peridot.envelope.service.impl;
 
 import com.jonichi.peridot.budget.service.BudgetContextService;
 import com.jonichi.peridot.common.dto.UserBudgetDTO;
+import com.jonichi.peridot.common.exception.PeridotDuplicateException;
 import com.jonichi.peridot.common.model.SystemStatus;
 import com.jonichi.peridot.common.util.TransactionalHandler;
 import com.jonichi.peridot.envelope.dto.EnvelopeResponseDTO;
@@ -14,6 +15,9 @@ import com.jonichi.peridot.envelope.service.EnvelopeService;
 import java.math.BigDecimal;
 import java.util.function.Supplier;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -27,6 +31,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class EnvelopeServiceImpl implements EnvelopeService {
 
+    private static final Logger logger = LoggerFactory.getLogger(EnvelopeServiceImpl.class);
     private final BudgetContextService budgetContextService;
     private final EnvelopeRepository envelopeRepository;
     private final BudgetEnvelopeRepository budgetEnvelopeRepository;
@@ -39,30 +44,43 @@ public class EnvelopeServiceImpl implements EnvelopeService {
             BigDecimal amount,
             Boolean recurring
     ) {
-        UserBudgetDTO userBudgetDTO = budgetContextService.getCurrentUserBudgetId();
+        logger.info("Start - Service - createEnvelope");
 
-        Supplier<EnvelopeResponseDTO> supplier = () -> {
-            Envelope envelope = envelopeRepository.save(Envelope.builder()
-                    .userId(userBudgetDTO.userId())
-                    .name(name)
-                    .description(description)
-                    .status(SystemStatus.SYSTEM_STATUS_ACTIVE)
-                    .build());
+        try {
+            UserBudgetDTO userBudgetDTO = budgetContextService.getCurrentUserBudgetId();
 
-            BudgetEnvelope budgetEnvelope = budgetEnvelopeRepository.save(BudgetEnvelope.builder()
-                    .budgetId(userBudgetDTO.budgetId())
-                    .envelopeId(envelope.getId())
-                    .amount(amount)
-                    .recurring(recurring)
-                    .status(BudgetEnvelopeStatus.ENVELOPE_STATUS_UNDER)
-                    .build());
+            Supplier<EnvelopeResponseDTO> supplier = () -> {
+                Envelope envelope = envelopeRepository.save(Envelope.builder()
+                        .userId(userBudgetDTO.userId())
+                        .name(name)
+                        .description(description)
+                        .status(SystemStatus.SYSTEM_STATUS_ACTIVE)
+                        .build());
 
-            return EnvelopeResponseDTO.builder()
-                    .envelopeId(envelope.getId())
-                    .budgetEnvelopeId(budgetEnvelope.getId())
-                    .build();
-        };
+                BudgetEnvelope budgetEnvelope = budgetEnvelopeRepository.save(
+                        BudgetEnvelope.builder()
+                            .budgetId(userBudgetDTO.budgetId())
+                            .envelopeId(envelope.getId())
+                            .amount(amount)
+                            .recurring(recurring)
+                            .status(BudgetEnvelopeStatus.ENVELOPE_STATUS_UNDER)
+                            .build()
+                );
 
-        return transactionalHandler.runInTransactionSupplier(supplier);
+                return EnvelopeResponseDTO.builder()
+                        .envelopeId(envelope.getId())
+                        .budgetEnvelopeId(budgetEnvelope.getId())
+                        .build();
+            };
+
+            return transactionalHandler.runInTransactionSupplier(supplier);
+        } catch (DataIntegrityViolationException e) {
+            logger.error("DataIntegrityViolationException: {}", e.getMessage());
+
+            throw new PeridotDuplicateException("Envelope already exists");
+        } finally {
+            logger.info("End - Service - createEnvelope");
+        }
+
     }
 }
