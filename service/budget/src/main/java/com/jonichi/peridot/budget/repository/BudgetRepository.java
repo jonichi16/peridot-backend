@@ -71,6 +71,15 @@ public interface BudgetRepository extends JpaRepository<Budget, Integer> {
             @Param("amount") BigDecimal amount
     );
 
+    /**
+     * Updates the status of a budget.
+     *
+     * <p>This method modifies the status of a budget in the database, updating the
+     * {@code status} field and setting the {@code updatedDate} to the current timestamp.</p>
+     *
+     * @param budgetId the unique identifier of the budget to update.
+     * @param status the new status to set for the budget.
+     */
     @Transactional
     @Modifying
     @Query(
