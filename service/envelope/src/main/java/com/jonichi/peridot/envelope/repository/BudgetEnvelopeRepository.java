@@ -38,7 +38,7 @@ public interface BudgetEnvelopeRepository extends JpaRepository<BudgetEnvelope, 
     @Query("""
             SELECT 1
             """)
-    void updateEnvelope(
+    Integer updateEnvelope(
             Integer budgetEnvelopeId,
             String name,
             String description,
