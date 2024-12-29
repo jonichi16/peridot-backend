@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -68,10 +69,36 @@ public class EnvelopeController {
     }
 
     @PutMapping("/{budgetEnvelopeId}")
-    public ResponseEntity<?> updateEnvelope(
+    public ResponseEntity<ApiResponse<EnvelopeResponseDTO>> updateEnvelope(
+            @PathVariable Integer budgetEnvelopeId,
             @RequestBody @Valid CreateUpdateEnvelopeDTO createUpdateEnvelopeDTO
     ) {
-        return ResponseEntity.status(HttpStatus.OK).build();
+        logger.info("Start - Controller - updateEnvelope");
+        logger.debug("""
+                PathVariable: {}
+                Request: {}
+                """,
+                budgetEnvelopeId,
+                createUpdateEnvelopeDTO
+        );
+
+        EnvelopeResponseDTO envelopeResponseDTO = envelopeService.updateEnvelope(
+                budgetEnvelopeId,
+                createUpdateEnvelopeDTO.name(),
+                createUpdateEnvelopeDTO.description(),
+                createUpdateEnvelopeDTO.amount(),
+                createUpdateEnvelopeDTO.recurring()
+        );
+
+        HttpStatus status = HttpStatus.OK;
+        ApiResponse<EnvelopeResponseDTO> response = SuccessResponse.<EnvelopeResponseDTO>builder()
+                .code(status.value())
+                .message("Envelope updated successfully")
+                .data(envelopeResponseDTO)
+                .build();
+
+        logger.info("End - Controller - updateEnvelope");
+        return ResponseEntity.status(status).body(response);
     }
 
 }

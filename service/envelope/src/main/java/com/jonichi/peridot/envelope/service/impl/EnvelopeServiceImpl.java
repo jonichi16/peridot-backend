@@ -91,4 +91,15 @@ public class EnvelopeServiceImpl implements EnvelopeService {
         }
 
     }
+
+    @Override
+    public EnvelopeResponseDTO updateEnvelope(
+            Integer budgetEnvelopeId,
+            String name,
+            String description,
+            BigDecimal amount,
+            Boolean recurring
+    ) {
+        return null;
+    }
 }
