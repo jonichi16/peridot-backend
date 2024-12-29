@@ -218,7 +218,7 @@ public class EnvelopeIntegrationTest {
         // when
 
         // then
-        mockMvc.perform(get("/api/envelopes/1"))
+        mockMvc.perform(get("/api/budgets/1/envelopes"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(

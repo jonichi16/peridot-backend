@@ -50,7 +50,7 @@ include::{snippets}/updateEnvelopeInvalidRequest/response-body.adoc[]
 '''
 
 === Get List of Envelopes
-`GET /api/envelopes/{budgetId}`
+`GET /api/budgets/{budgetId}/envelopes`
 
 Retrieved list of envelopes for the current budget.
 
