@@ -4,6 +4,7 @@ import com.jonichi.peridot.budget.model.Budget;
 import com.jonichi.peridot.budget.service.BudgetContextService;
 import com.jonichi.peridot.common.dto.UserBudgetDTO;
 import com.jonichi.peridot.common.exception.PeridotDuplicateException;
+import com.jonichi.peridot.common.exception.PeridotNotFoundException;
 import com.jonichi.peridot.common.model.SystemStatus;
 import com.jonichi.peridot.common.util.TransactionalHandler;
 import com.jonichi.peridot.envelope.dto.EnvelopeResponseDTO;
@@ -187,5 +188,67 @@ public class EnvelopeServiceImplTest {
         assertThat(response.envelopeId()).isEqualTo(1);
         assertThat(response.budgetEnvelopeId()).isEqualTo(1);
 
+    }
+
+    @Test
+    public void updateEnvelope_withDuplicateEnvelope_shouldThrowPeridotDuplicateException() throws Exception {
+        // given
+        Integer budgetEnvelopeId = 1;
+        String name = "Sample";
+        String description = "This is sample";
+        BigDecimal amount = BigDecimal.valueOf(1000);
+
+        // when
+        when(budgetEnvelopeRepository.updateEnvelope(
+                budgetEnvelopeId,
+                name,
+                description,
+                amount,
+                true
+        )).thenThrow(
+                new DataIntegrityViolationException(
+                        "Detail: Key (user_id, name)=(1, Sample) already exists."
+                ));
+        when(transactionalHandler.runInTransactionSupplier(any(Supplier.class)))
+                .thenAnswer(invocation -> {
+                    Supplier<EnvelopeResponseDTO> supplier = invocation.getArgument(0);
+                    return supplier.get();
+                });
+
+        // then
+        assertThatThrownBy(() -> envelopeServiceImpl.updateEnvelope(
+                budgetEnvelopeId,
+                name,
+                description,
+                amount,
+                true
+        )).isInstanceOf(PeridotDuplicateException.class)
+                .hasMessage("Envelope already exists");
+    }
+
+    @Test
+    public void updateEnvelope_withEnvelopeNotExist_shouldThrowPeridotNotFoundException() throws Exception {
+        // given
+        Integer budgetEnvelopeId = 1;
+        String name = "Sample";
+        String description = "This is sample";
+        BigDecimal amount = BigDecimal.valueOf(1000);
+
+        // when
+        when(transactionalHandler.runInTransactionSupplier(any(Supplier.class)))
+                .thenAnswer(invocation -> {
+                    Supplier<EnvelopeResponseDTO> supplier = invocation.getArgument(0);
+                    return supplier.get();
+                });
+
+        // then
+        assertThatThrownBy(() -> envelopeServiceImpl.updateEnvelope(
+                budgetEnvelopeId,
+                name,
+                description,
+                amount,
+                true
+        )).isInstanceOf(PeridotNotFoundException.class)
+                .hasMessage("Envelope does not exist");
     }
 }

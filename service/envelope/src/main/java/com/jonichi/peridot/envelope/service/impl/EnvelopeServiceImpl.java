@@ -3,6 +3,7 @@ package com.jonichi.peridot.envelope.service.impl;
 import com.jonichi.peridot.budget.service.BudgetContextService;
 import com.jonichi.peridot.common.dto.UserBudgetDTO;
 import com.jonichi.peridot.common.exception.PeridotDuplicateException;
+import com.jonichi.peridot.common.exception.PeridotNotFoundException;
 import com.jonichi.peridot.common.model.SystemStatus;
 import com.jonichi.peridot.common.util.TransactionalHandler;
 import com.jonichi.peridot.envelope.dto.EnvelopeResponseDTO;
@@ -102,28 +103,40 @@ public class EnvelopeServiceImpl implements EnvelopeService {
     ) {
         logger.info("Start - Service - updateEnvelope");
 
-        Supplier<EnvelopeResponseDTO> supplier = () -> {
-            budgetEnvelopeRepository.updateEnvelope(
-                    budgetEnvelopeId,
-                    name,
-                    description,
-                    amount,
-                    recurring
-            );
+        try {
+            Supplier<EnvelopeResponseDTO> supplier = () -> {
+                budgetEnvelopeRepository.updateEnvelope(
+                        budgetEnvelopeId,
+                        name,
+                        description,
+                        amount,
+                        recurring
+                );
 
-            BudgetEnvelope budgetEnvelope = budgetEnvelopeRepository.getReferenceById(budgetEnvelopeId);
+                BudgetEnvelope budgetEnvelope = budgetEnvelopeRepository.getReferenceById(budgetEnvelopeId);
 
-            BigDecimal totalExpenses = budgetEnvelopeRepository.getTotalExpenses(budgetEnvelope.getBudgetId());
+                BigDecimal totalExpenses = budgetEnvelopeRepository.getTotalExpenses(budgetEnvelope.getBudgetId());
 
-            budgetContextService.updateBudgetStatus(budgetEnvelope.getBudgetId(), totalExpenses);
+                budgetContextService.updateBudgetStatus(budgetEnvelope.getBudgetId(), totalExpenses);
 
-            return EnvelopeResponseDTO.builder()
-                    .envelopeId(budgetEnvelope.getEnvelopeId())
-                    .budgetEnvelopeId(budgetEnvelope.getId())
-                    .build();
-        };
+                return EnvelopeResponseDTO.builder()
+                        .envelopeId(budgetEnvelope.getEnvelopeId())
+                        .budgetEnvelopeId(budgetEnvelope.getId())
+                        .build();
+            };
 
-        logger.info("End - Service - updateEnvelope");
-        return transactionalHandler.runInTransactionSupplier(supplier);
+            return transactionalHandler.runInTransactionSupplier(supplier);
+        } catch (DataIntegrityViolationException e) {
+            logger.error("Update DataIntegrityViolationException: {}", e.getMessage());
+
+            throw new PeridotDuplicateException("Envelope already exists");
+        } catch (NullPointerException e) {
+            logger.error("NullPointerException: {}", e.getMessage());
+
+            throw new PeridotNotFoundException("Envelope does not exist");
+        } finally {
+            logger.info("End - Service - updateEnvelope");
+        }
+
     }
 }
