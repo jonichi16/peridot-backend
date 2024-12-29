@@ -2,7 +2,7 @@ package com.jonichi.peridot.envelope.controller;
 
 import com.jonichi.peridot.common.dto.ApiResponse;
 import com.jonichi.peridot.common.dto.SuccessResponse;
-import com.jonichi.peridot.envelope.dto.CreateEnvelopeDTO;
+import com.jonichi.peridot.envelope.dto.CreateUpdateEnvelopeDTO;
 import com.jonichi.peridot.envelope.dto.EnvelopeResponseDTO;
 import com.jonichi.peridot.envelope.service.EnvelopeService;
 import jakarta.validation.Valid;
@@ -34,25 +34,25 @@ public class EnvelopeController {
      * Creates a new envelope.
      *
      * <p>This endpoint handles HTTP POST requests to create a new envelope. The request body must
-     * contain a valid {@link CreateEnvelopeDTO}. The created envelope's details are returned
+     * contain a valid {@link CreateUpdateEnvelopeDTO}. The created envelope's details are returned
      * in the response.</p>
      *
-     * @param createEnvelopeDTO the DTO containing details for the new envelope.
+     * @param createUpdateEnvelopeDTO the DTO containing details for the new envelope.
      * @return a {@link ResponseEntity} containing an {@link ApiResponse} with the created envelope
      *         details in {@link EnvelopeResponseDTO} and an HTTP status of 201 (Created).
      */
     @PostMapping("")
     public ResponseEntity<ApiResponse<EnvelopeResponseDTO>> createEnvelope(
-            @RequestBody @Valid CreateEnvelopeDTO createEnvelopeDTO
+            @RequestBody @Valid CreateUpdateEnvelopeDTO createUpdateEnvelopeDTO
     ) {
         logger.info("Start - Controller - createBudget");
-        logger.debug("Request: {}", createEnvelopeDTO);
+        logger.debug("Request: {}", createUpdateEnvelopeDTO);
 
         EnvelopeResponseDTO envelopeResponseDTO = envelopeService.createEnvelope(
-                createEnvelopeDTO.name(),
-                createEnvelopeDTO.description(),
-                createEnvelopeDTO.amount(),
-                createEnvelopeDTO.recurring()
+                createUpdateEnvelopeDTO.name(),
+                createUpdateEnvelopeDTO.description(),
+                createUpdateEnvelopeDTO.amount(),
+                createUpdateEnvelopeDTO.recurring()
         );
 
         HttpStatus status = HttpStatus.CREATED;

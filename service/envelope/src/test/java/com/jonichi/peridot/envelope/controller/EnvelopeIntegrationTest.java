@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jonichi.peridot.auth.config.SecurityConfig;
 import com.jonichi.peridot.auth.repository.UserRepository;
 import com.jonichi.peridot.budget.repository.BudgetRepository;
-import com.jonichi.peridot.envelope.dto.CreateEnvelopeDTO;
+import com.jonichi.peridot.envelope.dto.CreateUpdateEnvelopeDTO;
 import com.jonichi.peridot.envelope.dto.EnvelopeResponseDTO;
 import com.jonichi.peridot.envelope.service.EnvelopeService;
 import java.math.BigDecimal;
@@ -50,7 +50,7 @@ public class EnvelopeIntegrationTest {
     public void createEnvelope_shouldReturn201Created() throws Exception {
         // given
         BigDecimal amount = new BigDecimal("500.00");
-        CreateEnvelopeDTO createEnvelopeDTO = CreateEnvelopeDTO.builder()
+        CreateUpdateEnvelopeDTO createUpdateEnvelopeDTO = CreateUpdateEnvelopeDTO.builder()
                 .name("Sample")
                 .description("This is a sample envelope")
                 .amount(amount)
@@ -63,16 +63,16 @@ public class EnvelopeIntegrationTest {
 
         // when
         when(envelopeService.createEnvelope(
-                createEnvelopeDTO.name(),
-                createEnvelopeDTO.description(),
-                createEnvelopeDTO.amount(),
-                createEnvelopeDTO.recurring()
+                createUpdateEnvelopeDTO.name(),
+                createUpdateEnvelopeDTO.description(),
+                createUpdateEnvelopeDTO.amount(),
+                createUpdateEnvelopeDTO.recurring()
         )).thenReturn(envelopeResponseDTO);
 
         // then
         mockMvc.perform(post("/api/envelopes")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(createEnvelopeDTO)))
+                        .content(objectMapper.writeValueAsString(createUpdateEnvelopeDTO)))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andDo(
