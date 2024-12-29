@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
  * envelopes. It interacts with the service layer to perform business operations.</p>
  */
 @RestController
-@RequestMapping("/api/envelopes")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class EnvelopeController {
 
@@ -47,7 +47,7 @@ public class EnvelopeController {
      * @return a {@link ResponseEntity} containing an {@link ApiResponse} with the created envelope
      *         details in {@link EnvelopeResponseDTO} and an HTTP status of 201 (Created).
      */
-    @PostMapping("")
+    @PostMapping("/envelopes")
     public ResponseEntity<ApiResponse<EnvelopeResponseDTO>> createEnvelope(
             @RequestBody @Valid CreateUpdateEnvelopeDTO createUpdateEnvelopeDTO
     ) {
@@ -82,7 +82,7 @@ public class EnvelopeController {
      * @param createUpdateEnvelopeDTO the DTO containing the updated information for the envelope.
      * @return a {@link ResponseEntity} containing the updated envelope details in an API response.
      */
-    @PutMapping("/{budgetEnvelopeId}")
+    @PutMapping("/envelopes/{budgetEnvelopeId}")
     public ResponseEntity<ApiResponse<EnvelopeResponseDTO>> updateEnvelope(
             @PathVariable Integer budgetEnvelopeId,
             @RequestBody @Valid CreateUpdateEnvelopeDTO createUpdateEnvelopeDTO
@@ -129,13 +129,13 @@ public class EnvelopeController {
      * @return a {@link ResponseEntity} containing an {@link ApiResponse} with paginated envelope
      *     data as {@link PeridotPagination}.
      */
-    @GetMapping("/{budgetId}")
+    @GetMapping("/budgets/{budgetId}/envelopes")
     public ResponseEntity<ApiResponse<PeridotPagination<EnvelopeDataDTO>>> getEnvelopes(
             @PathVariable Integer budgetId,
             @RequestParam(required = false, defaultValue = "1") Integer page,
             @RequestParam(required = false, defaultValue = "10") Integer size,
             @RequestParam(required = false, defaultValue = "id") String sortBy,
-            @RequestParam(required = false, defaultValue = "desc") String sortDirection
+            @RequestParam(required = false, defaultValue = "asc") String sortDirection
     ) {
         logger.info("Start - Controller - getEnvelopes");
         logger.debug("""
