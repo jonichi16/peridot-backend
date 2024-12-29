@@ -23,3 +23,26 @@ include::{snippets}/createEnvelopesMissingFields/response-body.adoc[]
 
 * Invalid Request:
 include::{snippets}/createEnvelopeInvalidRequest/response-body.adoc[]
+
+'''
+
+=== Update Envelope
+`PUT /api/envelopes/{budgetEnvelopeId}`
+
+Update envelope for the current budget.
+
+==== Request
+
+include::{snippets}/updateEnvelopeSuccess/request-body.adoc[]
+
+==== Success Response
+
+include::{snippets}/updateEnvelopeSuccess/response-body.adoc[]
+
+==== Error Responses
+
+* Missing Fields:
+include::{snippets}/updateEnvelopesMissingFields/response-body.adoc[]
+
+* Invalid Request:
+include::{snippets}/updateEnvelopeInvalidRequest/response-body.adoc[]
