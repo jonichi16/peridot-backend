@@ -6,6 +6,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * A class representing pagination information for a list of items.
+ *
+ * <p>This class contains metadata about the paginated content, including the total number of
+ * elements, the current page, and whether the current page is the first or last.</p>
+ *
+ * @param <T> the type of content being paginated.
+ */
 @Data
 @Builder
 @AllArgsConstructor
