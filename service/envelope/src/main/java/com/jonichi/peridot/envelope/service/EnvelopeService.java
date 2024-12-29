@@ -1,6 +1,10 @@
 package com.jonichi.peridot.envelope.service;
 
 import com.jonichi.peridot.envelope.dto.EnvelopeResponseDTO;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 /**
@@ -24,6 +28,14 @@ public interface EnvelopeService {
      * @return a {@link EnvelopeResponseDTO} containing the details of the created envelope.
      */
     EnvelopeResponseDTO createEnvelope(
+            String name,
+            String description,
+            BigDecimal amount,
+            Boolean recurring
+    );
+
+    EnvelopeResponseDTO updateEnvelope(
+            Integer budgetEnvelopeId,
             String name,
             String description,
             BigDecimal amount,
