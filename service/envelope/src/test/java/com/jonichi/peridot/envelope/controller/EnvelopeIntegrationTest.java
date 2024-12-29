@@ -5,9 +5,13 @@ import com.jonichi.peridot.auth.config.SecurityConfig;
 import com.jonichi.peridot.auth.repository.UserRepository;
 import com.jonichi.peridot.budget.repository.BudgetRepository;
 import com.jonichi.peridot.envelope.dto.CreateUpdateEnvelopeDTO;
+import com.jonichi.peridot.envelope.dto.EnvelopeDataDTO;
 import com.jonichi.peridot.envelope.dto.EnvelopeResponseDTO;
+import com.jonichi.peridot.envelope.dto.PeridotPagination;
+import com.jonichi.peridot.envelope.model.BudgetEnvelopeStatus;
 import com.jonichi.peridot.envelope.service.EnvelopeService;
 import java.math.BigDecimal;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +19,11 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
@@ -214,8 +223,51 @@ public class EnvelopeIntegrationTest {
     @WithMockUser
     public void getEnvelopes_shouldReturn200Ok() throws Exception {
         // given
+        Integer budgetId = 1;
+        Integer page = 1;
+        Integer size = 10;
+        String sortBy = "id";
+        String sortDirection = "DESC";
+
+        List<EnvelopeDataDTO> envelopes = List.of(
+                EnvelopeDataDTO.builder()
+                        .name("Sample 1")
+                        .description("This is sample envelope")
+                        .amount(BigDecimal.valueOf(1000))
+                        .recurring(true)
+                        .status(BudgetEnvelopeStatus.ENVELOPE_STATUS_UNDER)
+                        .build(),
+                EnvelopeDataDTO.builder()
+                        .name("Sample 2")
+                        .description("This is sample envelope")
+                        .amount(BigDecimal.valueOf(500))
+                        .recurring(true)
+                        .status(BudgetEnvelopeStatus.ENVELOPE_STATUS_UNDER)
+                        .build()
+        );
+
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "id"));
+
+        Page<EnvelopeDataDTO> pagination = new PageImpl<>(envelopes, pageable, envelopes.size());
+
+        PeridotPagination<EnvelopeDataDTO> peridotPagination = PeridotPagination.<EnvelopeDataDTO>builder()
+                .content(envelopes)
+                .totalPages(pagination.getTotalPages())
+                .totalElements(pagination.getTotalElements())
+                .numberOfElements(pagination.getNumberOfElements())
+                .currentPage(pagination.getNumber() + 1)
+                .first(pagination.isFirst())
+                .last(pagination.isLast())
+                .build();
 
         // when
+        when(envelopeService.getEnvelopes(
+                budgetId,
+                page,
+                size,
+                sortBy,
+                sortDirection
+        )).thenReturn(peridotPagination);
 
         // then
         mockMvc.perform(get("/api/budgets/1/envelopes"))
