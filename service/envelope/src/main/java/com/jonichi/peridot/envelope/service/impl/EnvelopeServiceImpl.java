@@ -100,6 +100,30 @@ public class EnvelopeServiceImpl implements EnvelopeService {
             BigDecimal amount,
             Boolean recurring
     ) {
-        return null;
+        logger.info("Start - Service - updateEnvelope");
+
+        Supplier<EnvelopeResponseDTO> supplier = () -> {
+            budgetEnvelopeRepository.updateEnvelope(
+                    budgetEnvelopeId,
+                    name,
+                    description,
+                    amount,
+                    recurring
+            );
+
+            BudgetEnvelope budgetEnvelope = budgetEnvelopeRepository.getReferenceById(budgetEnvelopeId);
+
+            BigDecimal totalExpenses = budgetEnvelopeRepository.getTotalExpenses(budgetEnvelope.getBudgetId());
+
+            budgetContextService.updateBudgetStatus(budgetEnvelope.getBudgetId(), totalExpenses);
+
+            return EnvelopeResponseDTO.builder()
+                    .envelopeId(budgetEnvelope.getEnvelopeId())
+                    .budgetEnvelopeId(budgetEnvelope.getId())
+                    .build();
+        };
+
+        logger.info("End - Service - updateEnvelope");
+        return transactionalHandler.runInTransactionSupplier(supplier);
     }
 }

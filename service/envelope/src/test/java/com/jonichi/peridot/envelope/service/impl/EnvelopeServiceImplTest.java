@@ -139,4 +139,53 @@ public class EnvelopeServiceImplTest {
         )).isInstanceOf(PeridotDuplicateException.class)
                 .hasMessage("Envelope already exists");
     }
+
+    @Test
+    public void updateEnvelope_shouldUpdateEnvelopeAndReturnEnvelope() throws Exception {
+        // given
+        Integer budgetEnvelopeId = 1;
+        String name = "Sample";
+        String description = "This is sample";
+        BigDecimal amount = BigDecimal.valueOf(1000);
+        BudgetEnvelope budgetEnvelope = BudgetEnvelope.builder()
+                .id(budgetEnvelopeId)
+                .budgetId(1)
+                .envelopeId(1)
+                .amount(amount)
+                .recurring(true)
+                .status(BudgetEnvelopeStatus.ENVELOPE_STATUS_UNDER)
+                .build();
+
+        // when
+        when(transactionalHandler.runInTransactionSupplier(any(Supplier.class)))
+                .thenAnswer(invocation -> {
+                    Supplier<Budget> supplier = invocation.getArgument(0);
+                    return supplier.get();
+                });
+        when(budgetEnvelopeRepository.getReferenceById(budgetEnvelopeId)).thenReturn(budgetEnvelope);
+        when(budgetEnvelopeRepository.getTotalExpenses(budgetEnvelope.getBudgetId())).thenReturn(BigDecimal.valueOf(2000));
+        EnvelopeResponseDTO response = envelopeServiceImpl.updateEnvelope(
+                budgetEnvelopeId,
+                name,
+                description,
+                amount,
+                true
+        );
+
+        // then
+        verify(transactionalHandler, times(1)).runInTransactionSupplier(any(Supplier.class));
+        verify(budgetEnvelopeRepository, times(1)).updateEnvelope(
+                budgetEnvelopeId,
+                name,
+                description,
+                amount,
+                true
+        );
+        verify(budgetEnvelopeRepository, times(1)).getReferenceById(budgetEnvelopeId);
+        verify(budgetEnvelopeRepository, times(1)).getTotalExpenses(budgetEnvelope.getBudgetId());
+        verify(budgetContextService, times(1)).updateBudgetStatus(budgetEnvelope.getBudgetId(), BigDecimal.valueOf(2000));
+        assertThat(response.envelopeId()).isEqualTo(1);
+        assertThat(response.budgetEnvelopeId()).isEqualTo(1);
+
+    }
 }

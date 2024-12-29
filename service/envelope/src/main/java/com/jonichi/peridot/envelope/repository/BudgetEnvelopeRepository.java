@@ -34,4 +34,15 @@ public interface BudgetEnvelopeRepository extends JpaRepository<BudgetEnvelope, 
     BigDecimal getTotalExpenses(
             @Param("budgetId") Integer budgetId
     );
+
+    @Query("""
+            SELECT 1
+            """)
+    void updateEnvelope(
+            Integer budgetEnvelopeId,
+            String name,
+            String description,
+            BigDecimal amount,
+            Boolean recurring
+    );
 }
