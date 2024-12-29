@@ -132,10 +132,10 @@ public class EnvelopeController {
     @GetMapping("/{budgetId}")
     public ResponseEntity<ApiResponse<PeridotPagination<EnvelopeDataDTO>>> getEnvelopes(
             @PathVariable Integer budgetId,
-            @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Integer size,
-            @RequestParam(required = false) String sortBy,
-            @RequestParam(required = false) String sortDirection
+            @RequestParam(required = false, defaultValue = "1") Integer page,
+            @RequestParam(required = false, defaultValue = "10") Integer size,
+            @RequestParam(required = false, defaultValue = "id") String sortBy,
+            @RequestParam(required = false, defaultValue = "desc") String sortDirection
     ) {
         logger.info("Start - Controller - getEnvelopes");
         logger.debug("""
