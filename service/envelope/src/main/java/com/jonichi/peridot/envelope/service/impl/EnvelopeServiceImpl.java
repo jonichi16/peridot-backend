@@ -162,10 +162,21 @@ public class EnvelopeServiceImpl implements EnvelopeService {
             String sortBy,
             String sortDirection
     ) {
+        Sort.Direction direction = Sort.Direction.fromString(sortDirection);
+
+        Sort sort = switch (sortBy) {
+            case "id" -> Sort.by(direction, "e.id");
+            case "name" -> Sort.by(direction, "e.name");
+            case "amount" -> Sort.by(direction, "be.amount");
+            case "recurring" -> Sort.by(direction, "be.recurring");
+            case "status" -> Sort.by(direction, "be.status");
+            default -> throw new PeridotNotFoundException("Sort by " + sortBy + " is not allowed");
+        };
+
         PageRequest pageable = PageRequest.of(
                 page - 1,
                 size,
-                Sort.by(Sort.Direction.fromString(sortDirection), sortBy)
+                sort
         );
 
         Page<EnvelopeDataDTO> envelopes = budgetEnvelopeRepository.getEnvelopes(
