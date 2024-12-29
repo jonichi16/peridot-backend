@@ -105,7 +105,8 @@ public class EnvelopeServiceImpl implements EnvelopeService {
 
         try {
             Supplier<EnvelopeResponseDTO> supplier = () -> {
-                BudgetEnvelope budgetEnvelope = budgetEnvelopeRepository.getReferenceById(budgetEnvelopeId);
+                BudgetEnvelope budgetEnvelope = budgetEnvelopeRepository
+                        .getReferenceById(budgetEnvelopeId);
 
                 envelopeRepository.updateEnvelope(
                         budgetEnvelope.getEnvelopeId(),
@@ -119,9 +120,13 @@ public class EnvelopeServiceImpl implements EnvelopeService {
                         recurring
                 );
 
-                BigDecimal totalExpenses = budgetEnvelopeRepository.getTotalExpenses(budgetEnvelope.getBudgetId());
+                BigDecimal totalExpenses = budgetEnvelopeRepository
+                        .getTotalExpenses(budgetEnvelope.getBudgetId());
 
-                budgetContextService.updateBudgetStatus(budgetEnvelope.getBudgetId(), totalExpenses);
+                budgetContextService.updateBudgetStatus(
+                        budgetEnvelope.getBudgetId(),
+                        totalExpenses
+                );
 
                 return EnvelopeResponseDTO.builder()
                         .envelopeId(budgetEnvelope.getEnvelopeId())

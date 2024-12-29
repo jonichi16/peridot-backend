@@ -37,6 +37,17 @@ public interface BudgetEnvelopeRepository extends JpaRepository<BudgetEnvelope, 
             @Param("budgetId") Integer budgetId
     );
 
+    /**
+     * Updates the details of a budget envelope.
+     *
+     * <p>This method modifies the amount, recurring status, and update timestamp of a
+     * budget envelope identified by the given budget envelope ID.</p>
+     *
+     * @param budgetEnvelopeId the unique identifier of the budget envelope to update.
+     * @param amount the new amount to set for the budget envelope.
+     * @param recurring the new recurring status to set for the budget envelope.
+     * @return the number of rows affected by the update operation.
+     */
     @Transactional
     @Modifying
     @Query("""

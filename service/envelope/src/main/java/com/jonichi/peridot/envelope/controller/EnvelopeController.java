@@ -68,6 +68,16 @@ public class EnvelopeController {
         return ResponseEntity.status(status).body(response);
     }
 
+    /**
+     * Updates an envelope's details.
+     *
+     * <p>This method processes a request to update the details of an envelope, including
+     * its name, description, amount, and recurring status.</p>
+     *
+     * @param budgetEnvelopeId the unique identifier of the envelope to update.
+     * @param createUpdateEnvelopeDTO the DTO containing the updated information for the envelope.
+     * @return a {@link ResponseEntity} containing the updated envelope details in an API response.
+     */
     @PutMapping("/{budgetEnvelopeId}")
     public ResponseEntity<ApiResponse<EnvelopeResponseDTO>> updateEnvelope(
             @PathVariable Integer budgetEnvelopeId,
