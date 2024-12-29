@@ -1,8 +1,10 @@
 package com.jonichi.peridot.envelope.repository;
 
 import com.jonichi.peridot.envelope.model.BudgetEnvelope;
+import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -35,8 +37,15 @@ public interface BudgetEnvelopeRepository extends JpaRepository<BudgetEnvelope, 
             @Param("budgetId") Integer budgetId
     );
 
+    @Transactional
+    @Modifying
     @Query("""
-            SELECT 1
+            UPDATE BudgetEnvelope be
+            SET
+                be.amount = :amount,
+                be.recurring = :recurring,
+                be.updatedDate = CURRENT_TIMESTAMP
+            WHERE be.id = :budgetEnvelopeId
             """)
     Integer updateBudgetEnvelope(
             @Param("budgetEnvelopeId") Integer budgetEnvelopeId,
