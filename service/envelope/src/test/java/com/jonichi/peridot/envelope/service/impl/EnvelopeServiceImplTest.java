@@ -272,11 +272,34 @@ public class EnvelopeServiceImplTest {
 
     @Test
     public void getEnvelopes_shouldReturnPeridotPaginationOfEnvelopeDataDTO() throws Exception {
+        testGetEnvelopes("id", "e.id");
+    }
+
+    @Test
+    public void getEnvelopes_withNameSort_shouldReturnPeridotPaginationOfEnvelopeDataDTO() throws Exception {
+        testGetEnvelopes("name", "e.name");
+    }
+
+    @Test
+    public void getEnvelopes_withAmountSort_shouldReturnPeridotPaginationOfEnvelopeDataDTO() throws Exception {
+        testGetEnvelopes("amount", "be.amount");
+    }
+
+    @Test
+    public void getEnvelopes_withRecurringSort_shouldReturnPeridotPaginationOfEnvelopeDataDTO() throws Exception {
+        testGetEnvelopes("recurring", "be.recurring");
+    }
+
+    @Test
+    public void getEnvelopes_withStatusSort_shouldReturnPeridotPaginationOfEnvelopeDataDTO() throws Exception {
+        testGetEnvelopes("status", "be.status");
+    }
+
+    private void testGetEnvelopes(String sortBy, String transformedSortBy) throws Exception {
         // given
         Integer budgetId = 1;
         Integer page = 1;
         Integer size = 10;
-        String sortBy = "id";
         String sortDirection = "asc";
 
         List<EnvelopeDataDTO> envelopes = List.of(
@@ -296,7 +319,12 @@ public class EnvelopeServiceImplTest {
                         .build()
         );
 
-        PageRequest pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "id"));
+        // Create pageable object based on sortBy and sortDirection
+        PageRequest pageable = PageRequest.of(
+                0,
+                10,
+                Sort.by(Sort.Direction.valueOf(sortDirection.toUpperCase()), transformedSortBy)
+        );
 
         Page<EnvelopeDataDTO> pagination = new PageImpl<>(envelopes, pageable, envelopes.size());
 
@@ -323,5 +351,27 @@ public class EnvelopeServiceImplTest {
         // then
         verify(budgetEnvelopeRepository, times(1)).getEnvelopes(budgetId, pageable);
         assertThat(response).isEqualTo(peridotPagination);
+    }
+
+    @Test
+    public void getEnvelopes_withInvalidSort_shouldThrowPeridotNotFoundException() throws Exception {
+        // given
+        Integer budgetId = 1;
+        Integer page = 1;
+        Integer size = 10;
+        String sortBy = "1234123";
+        String sortDirection = "asc";
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> envelopeServiceImpl.getEnvelopes(
+                budgetId,
+                page,
+                size,
+                sortBy,
+                sortDirection
+        )).isInstanceOf(PeridotNotFoundException.class)
+                .hasMessage("Sort by " + sortBy + " is not allowed");
     }
 }
