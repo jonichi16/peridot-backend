@@ -23,6 +23,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -203,6 +204,25 @@ public class EnvelopeIntegrationTest {
                 .andExpect(status().isBadRequest())
                 .andDo(
                         document("updateEnvelopeInvalidRequest",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint())
+                        )
+                );
+    }
+
+    @Test
+    @WithMockUser
+    public void getEnvelopes_shouldReturn200Ok() throws Exception {
+        // given
+
+        // when
+
+        // then
+        mockMvc.perform(get("/api/envelopes/1"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(
+                        document("getEnvelopes",
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint())
                         )
