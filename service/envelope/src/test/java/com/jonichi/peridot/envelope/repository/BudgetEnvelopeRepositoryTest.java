@@ -4,6 +4,7 @@ import com.jonichi.peridot.budget.model.Budget;
 import com.jonichi.peridot.budget.model.BudgetStatus;
 import com.jonichi.peridot.budget.repository.BudgetRepository;
 import com.jonichi.peridot.common.model.SystemStatus;
+import com.jonichi.peridot.envelope.dto.EnvelopeDataDTO;
 import com.jonichi.peridot.envelope.model.BudgetEnvelope;
 import com.jonichi.peridot.envelope.model.BudgetEnvelopeStatus;
 import com.jonichi.peridot.envelope.model.Envelope;
@@ -29,6 +30,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -187,6 +191,39 @@ public class BudgetEnvelopeRepositoryTest {
 
         // then
         assertThat(updated).isEqualTo(1);
+    }
+
+    @Test
+    public void getEnvelopes_shouldReturnEnvelopeDataAndPageable() throws Exception {
+        // given
+        Integer budgetId = budgetRepository.findAll().getFirst().getId();
+        PageRequest pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "id"));
+        List<EnvelopeDataDTO> expectedList = List.of(
+                EnvelopeDataDTO.builder()
+                        .name("Test 2")
+                        .amount(new BigDecimal("500.00"))
+                        .recurring(true)
+                        .status(BudgetEnvelopeStatus.ENVELOPE_STATUS_UNDER)
+                        .build(),
+                EnvelopeDataDTO.builder()
+                        .name("Test 1")
+                        .amount(new BigDecimal("1000.00"))
+                        .recurring(true)
+                        .status(BudgetEnvelopeStatus.ENVELOPE_STATUS_UNDER)
+                        .build()
+        );
+
+        // when
+        Page<EnvelopeDataDTO> envelopes = budgetEnvelopeRepository.getEnvelopes(budgetId, pageable);
+
+        // then
+        assertThat(envelopes.getContent()).isEqualTo(expectedList);
+        assertThat(envelopes.getTotalPages()).isEqualTo(1);
+        assertThat(envelopes.getTotalElements()).isEqualTo(2);
+        assertThat(envelopes.getNumberOfElements()).isEqualTo(2);
+        assertThat(envelopes.getNumber()).isEqualTo(0);
+        assertThat(envelopes.isFirst()).isTrue();
+        assertThat(envelopes.isLast()).isTrue();
     }
 
 }
