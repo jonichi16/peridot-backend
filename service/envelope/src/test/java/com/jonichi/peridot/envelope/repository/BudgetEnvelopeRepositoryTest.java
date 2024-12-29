@@ -97,7 +97,7 @@ public class BudgetEnvelopeRepositoryTest {
 
     @BeforeEach
     public void setUpTestData() {
-        budgetRepository.saveAndFlush(
+        Budget budget = budgetRepository.saveAndFlush(
                 Budget.builder()
                         .userId(1)
                         .amount(BigDecimal.valueOf(10000))
@@ -105,13 +105,13 @@ public class BudgetEnvelopeRepositoryTest {
                         .status(BudgetStatus.BUDGET_STATUS_INCOMPLETE)
                         .build()
         );
-        envelopeRepository.saveAllAndFlush(List.of(
+        List<Envelope> envelopes = envelopeRepository.saveAllAndFlush(List.of(
            createTestEnvelope("Test 1"),
            createTestEnvelope("Test 2")
         ));
 
-        BudgetEnvelope budgetEnvelope1 = createTestBudgetEnvelope(1, new BigDecimal("1000"));
-        BudgetEnvelope budgetEnvelope2 = createTestBudgetEnvelope(2, new BigDecimal("500"));
+        BudgetEnvelope budgetEnvelope1 = createTestBudgetEnvelope(budget.getId(), envelopes.getFirst().getId(), new BigDecimal("1000"));
+        BudgetEnvelope budgetEnvelope2 = createTestBudgetEnvelope(budget.getId(), envelopes.get(1).getId(), new BigDecimal("500"));
         budgetEnvelopeRepository.saveAllAndFlush(List.of(budgetEnvelope1, budgetEnvelope2));
     }
 
@@ -124,11 +124,12 @@ public class BudgetEnvelopeRepositoryTest {
     }
 
     private BudgetEnvelope createTestBudgetEnvelope(
+            Integer budgetId,
             Integer envelopeId,
             BigDecimal amount
     ) {
         return BudgetEnvelope.builder()
-                .budgetId(1)
+                .budgetId(budgetId)
                 .envelopeId(envelopeId)
                 .amount(amount)
                 .recurring(true)
@@ -151,6 +152,25 @@ public class BudgetEnvelopeRepositoryTest {
 
         // then
         assertThat(totalExpenses).isEqualTo(new BigDecimal("1500.00"));
+    }
+
+//    @Test
+    public void updateEnvelope_shouldUpdateAnBudgetEnvelope() throws Exception {
+        // given
+        Integer budgetEnvelopeId = 1;
+        String name = "New Name";
+        String description = "New Description";
+        BigDecimal amount = BigDecimal.valueOf(1200);
+
+        // when
+        Integer updated = budgetEnvelopeRepository.updateBudgetEnvelope(
+                budgetEnvelopeId,
+                amount,
+                false
+        );
+
+        // then
+        assertThat(updated).isEqualTo(1);
     }
 
 }
