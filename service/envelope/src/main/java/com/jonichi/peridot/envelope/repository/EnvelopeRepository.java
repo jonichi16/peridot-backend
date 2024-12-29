@@ -2,6 +2,7 @@ package com.jonichi.peridot.envelope.repository;
 
 import com.jonichi.peridot.envelope.model.Envelope;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -13,4 +14,13 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface EnvelopeRepository extends JpaRepository<Envelope, Integer> {
+
+    @Query("""
+            SELECT 1
+            """)
+    Integer updateEnvelope(
+            Integer envelopeId,
+            String name,
+            String description
+    );
 }

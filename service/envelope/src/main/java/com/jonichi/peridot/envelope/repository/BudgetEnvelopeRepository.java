@@ -38,11 +38,9 @@ public interface BudgetEnvelopeRepository extends JpaRepository<BudgetEnvelope, 
     @Query("""
             SELECT 1
             """)
-    Integer updateEnvelope(
-            Integer budgetEnvelopeId,
-            String name,
-            String description,
-            BigDecimal amount,
-            Boolean recurring
+    Integer updateBudgetEnvelope(
+            @Param("budgetEnvelopeId") Integer budgetEnvelopeId,
+            @Param("amount") BigDecimal amount,
+            @Param("recurring") Boolean recurring
     );
 }
