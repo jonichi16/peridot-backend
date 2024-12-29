@@ -21,6 +21,9 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 /**
@@ -159,6 +162,24 @@ public class EnvelopeServiceImpl implements EnvelopeService {
             String sortBy,
             String sortDirection
     ) {
-        return null;
+        PageRequest pageable = PageRequest.of(
+                page - 1,
+                size,
+                Sort.by(Sort.Direction.fromString(sortDirection), sortBy)
+        );
+
+        Page<EnvelopeDataDTO> envelopes = budgetEnvelopeRepository.getEnvelopes(
+                budgetId, pageable
+        );
+
+        return PeridotPagination.<EnvelopeDataDTO>builder()
+                .content(envelopes.getContent())
+                .totalPages(envelopes.getTotalPages())
+                .totalElements(envelopes.getTotalElements())
+                .numberOfElements(envelopes.getNumberOfElements())
+                .currentPage(envelopes.getNumber() + 1)
+                .first(envelopes.isFirst())
+                .last(envelopes.isLast())
+                .build();
     }
 }

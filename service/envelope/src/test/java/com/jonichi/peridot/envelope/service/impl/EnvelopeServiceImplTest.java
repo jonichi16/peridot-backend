@@ -7,13 +7,16 @@ import com.jonichi.peridot.common.exception.PeridotDuplicateException;
 import com.jonichi.peridot.common.exception.PeridotNotFoundException;
 import com.jonichi.peridot.common.model.SystemStatus;
 import com.jonichi.peridot.common.util.TransactionalHandler;
+import com.jonichi.peridot.envelope.dto.EnvelopeDataDTO;
 import com.jonichi.peridot.envelope.dto.EnvelopeResponseDTO;
+import com.jonichi.peridot.envelope.dto.PeridotPagination;
 import com.jonichi.peridot.envelope.model.BudgetEnvelope;
 import com.jonichi.peridot.envelope.model.BudgetEnvelopeStatus;
 import com.jonichi.peridot.envelope.model.Envelope;
 import com.jonichi.peridot.envelope.repository.BudgetEnvelopeRepository;
 import com.jonichi.peridot.envelope.repository.EnvelopeRepository;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.function.Supplier;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -27,6 +30,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 @ExtendWith(MockitoExtension.class)
 public class EnvelopeServiceImplTest {
@@ -260,5 +268,60 @@ public class EnvelopeServiceImplTest {
                 true
         )).isInstanceOf(PeridotNotFoundException.class)
                 .hasMessage("Envelope does not exist");
+    }
+
+    @Test
+    public void getEnvelopes_shouldReturnPeridotPaginationOfEnvelopeDataDTO() throws Exception {
+        // given
+        Integer budgetId = 1;
+        Integer page = 1;
+        Integer size = 10;
+        String sortBy = "id";
+        String sortDirection = "asc";
+
+        List<EnvelopeDataDTO> envelopes = List.of(
+                EnvelopeDataDTO.builder()
+                        .name("Sample 1")
+                        .description("This is sample envelope")
+                        .amount(BigDecimal.valueOf(1000))
+                        .recurring(true)
+                        .status(BudgetEnvelopeStatus.ENVELOPE_STATUS_UNDER)
+                        .build(),
+                EnvelopeDataDTO.builder()
+                        .name("Sample 2")
+                        .description("This is sample envelope")
+                        .amount(BigDecimal.valueOf(500))
+                        .recurring(true)
+                        .status(BudgetEnvelopeStatus.ENVELOPE_STATUS_UNDER)
+                        .build()
+        );
+
+        PageRequest pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "id"));
+
+        Page<EnvelopeDataDTO> pagination = new PageImpl<>(envelopes, pageable, envelopes.size());
+
+        PeridotPagination<EnvelopeDataDTO> peridotPagination = PeridotPagination.<EnvelopeDataDTO>builder()
+                .content(envelopes)
+                .totalPages(pagination.getTotalPages())
+                .totalElements(pagination.getTotalElements())
+                .numberOfElements(pagination.getNumberOfElements())
+                .currentPage(pagination.getNumber() + 1)
+                .first(pagination.isFirst())
+                .last(pagination.isLast())
+                .build();
+
+        // when
+        when(budgetEnvelopeRepository.getEnvelopes(budgetId, pageable)).thenReturn(pagination);
+        PeridotPagination<EnvelopeDataDTO> response = envelopeServiceImpl.getEnvelopes(
+                budgetId,
+                page,
+                size,
+                sortBy,
+                sortDirection
+        );
+
+        // then
+        verify(budgetEnvelopeRepository, times(1)).getEnvelopes(budgetId, pageable);
+        assertThat(response).isEqualTo(peridotPagination);
     }
 }
