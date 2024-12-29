@@ -24,6 +24,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -121,6 +122,87 @@ public class EnvelopeIntegrationTest {
                 .andExpect(status().isBadRequest())
                 .andDo(
                         document("createEnvelopeInvalidRequest",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint())
+                        )
+                );
+    }
+
+    @Test
+    @WithMockUser
+    public void updateEnvelope_shouldReturn200Ok() throws Exception {
+        // given
+        CreateUpdateEnvelopeDTO createUpdateEnvelopeDTO = CreateUpdateEnvelopeDTO.builder()
+                .name("Sample")
+                .description("This is sample")
+                .amount(BigDecimal.valueOf(1000))
+                .recurring(true)
+                .build();
+        EnvelopeResponseDTO envelopeResponseDTO = EnvelopeResponseDTO.builder()
+                .envelopeId(1)
+                .budgetEnvelopeId(1)
+                .build();
+
+        // when
+        when(envelopeService.createEnvelope(
+                createUpdateEnvelopeDTO.name(),
+                createUpdateEnvelopeDTO.description(),
+                createUpdateEnvelopeDTO.amount(),
+                createUpdateEnvelopeDTO.recurring()
+        )).thenReturn(envelopeResponseDTO);
+
+        // then /api/envelopes/{envelopeId} - envelopeId = budgetEnvelopeId
+        mockMvc.perform(put("/api/envelopes/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createUpdateEnvelopeDTO)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(
+                        document("updateEnvelopeSuccess",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint())
+                        )
+                );
+    }
+
+    @Test
+    @WithMockUser
+    public void updateEnvelope_withMissingFields_shouldReturn400BadRequestError() throws Exception {
+        // given
+        String invalidRequest = "{ }";
+
+        // when
+
+        // then
+        mockMvc.perform(put("/api/envelopes/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(invalidRequest))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andDo(
+                        document("updateEnvelopesMissingFields",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint())
+                        )
+                );
+    }
+
+    @Test
+    @WithMockUser
+    public void updateEnvelope_withLessThanZeroAmount_shouldReturn400BadRequestError() throws Exception {
+        // given
+        String invalidRequest = "{ \"amount\": \"-1.00\" }";
+
+        // when
+
+        // then
+        mockMvc.perform(put("/api/envelopes/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(invalidRequest))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andDo(
+                        document("updateEnvelopeInvalidRequest",
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint())
                         )
