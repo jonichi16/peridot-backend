@@ -227,7 +227,7 @@ public class EnvelopeIntegrationTest {
         Integer page = 1;
         Integer size = 10;
         String sortBy = "id";
-        String sortDirection = "DESC";
+        String sortDirection = "asc";
 
         List<EnvelopeDataDTO> envelopes = List.of(
                 EnvelopeDataDTO.builder()
@@ -246,7 +246,7 @@ public class EnvelopeIntegrationTest {
                         .build()
         );
 
-        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "id"));
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "id"));
 
         Page<EnvelopeDataDTO> pagination = new PageImpl<>(envelopes, pageable, envelopes.size());
 
@@ -270,7 +270,7 @@ public class EnvelopeIntegrationTest {
         )).thenReturn(peridotPagination);
 
         // then
-        mockMvc.perform(get("/api/budgets/1/envelopes"))
+        mockMvc.perform(get("/api/budgets/1/envelopes?page=1&size=10&sortBy=id&sortDirection=asc"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(
