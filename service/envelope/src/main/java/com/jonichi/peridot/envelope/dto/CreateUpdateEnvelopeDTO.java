@@ -23,7 +23,7 @@ import lombok.Builder;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Builder
-public record CreateEnvelopeDTO(
+public record CreateUpdateEnvelopeDTO(
         @NotEmpty(message = "Name is required")
         String name,
 

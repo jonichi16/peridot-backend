@@ -1,7 +1,7 @@
 package com.jonichi.peridot.envelope.controller;
 
 import com.jonichi.peridot.common.dto.ApiResponse;
-import com.jonichi.peridot.envelope.dto.CreateEnvelopeDTO;
+import com.jonichi.peridot.envelope.dto.CreateUpdateEnvelopeDTO;
 import com.jonichi.peridot.envelope.dto.EnvelopeResponseDTO;
 import com.jonichi.peridot.envelope.service.EnvelopeService;
 import java.math.BigDecimal;
@@ -29,7 +29,7 @@ public class EnvelopeControllerTest {
     public void createEnvelope_shouldReturnTheCorrectResponse() throws Exception {
         // given
         BigDecimal amount = new BigDecimal("1000");
-        CreateEnvelopeDTO createEnvelopeDTO = CreateEnvelopeDTO.builder()
+        CreateUpdateEnvelopeDTO createUpdateEnvelopeDTO = CreateUpdateEnvelopeDTO.builder()
                 .name("Sample")
                 .description("This is sample envelope")
                 .amount(amount)
@@ -42,20 +42,20 @@ public class EnvelopeControllerTest {
 
         // when
         when(envelopeService.createEnvelope(
-                createEnvelopeDTO.name(),
-                createEnvelopeDTO.description(),
-                createEnvelopeDTO.amount(),
-                createEnvelopeDTO.recurring()
+                createUpdateEnvelopeDTO.name(),
+                createUpdateEnvelopeDTO.description(),
+                createUpdateEnvelopeDTO.amount(),
+                createUpdateEnvelopeDTO.recurring()
         )).thenReturn(envelopeResponseDTO);
         ResponseEntity<ApiResponse<EnvelopeResponseDTO>> response = envelopeController
-                .createEnvelope(createEnvelopeDTO);
+                .createEnvelope(createUpdateEnvelopeDTO);
 
         // then
         verify(envelopeService, times(1)).createEnvelope(
-                createEnvelopeDTO.name(),
-                createEnvelopeDTO.description(),
-                createEnvelopeDTO.amount(),
-                createEnvelopeDTO.recurring()
+                createUpdateEnvelopeDTO.name(),
+                createUpdateEnvelopeDTO.description(),
+                createUpdateEnvelopeDTO.amount(),
+                createUpdateEnvelopeDTO.recurring()
         );
         assertThat(response.getStatusCode().value()).isEqualTo(201);
         assertThat(Objects.requireNonNull(response.getBody()).getData().envelopeId()).isEqualTo(1);
