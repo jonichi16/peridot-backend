@@ -1,10 +1,6 @@
 package com.jonichi.peridot.envelope.service;
 
 import com.jonichi.peridot.envelope.dto.EnvelopeResponseDTO;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Digits;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 /**
@@ -34,6 +30,19 @@ public interface EnvelopeService {
             Boolean recurring
     );
 
+    /**
+     * Updates the details of an envelope.
+     *
+     * <p>This method modifies the name, description, amount, and recurring status of an envelope
+     * identified by the given budget envelope ID.</p>
+     *
+     * @param budgetEnvelopeId the unique identifier of the envelope to update.
+     * @param name the new name to set for the envelope.
+     * @param description the new description to set for the envelope.
+     * @param amount the new amount to set for the envelope.
+     * @param recurring the new recurring status to set for the envelope.
+     * @return an {@link EnvelopeResponseDTO} containing the updated envelope details.
+     */
     EnvelopeResponseDTO updateEnvelope(
             Integer budgetEnvelopeId,
             String name,

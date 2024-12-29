@@ -17,6 +17,17 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EnvelopeRepository extends JpaRepository<Envelope, Integer> {
 
+    /**
+     * Updates the details of an envelope.
+     *
+     * <p>This method modifies the name, description, and update timestamp of an envelope
+     * identified by the given envelope ID.</p>
+     *
+     * @param envelopeId the unique identifier of the envelope to update.
+     * @param name the new name to set for the envelope.
+     * @param description the new description to set for the envelope.
+     * @return the number of rows affected by the update operation.
+     */
     @Transactional
     @Modifying
     @Query("""
