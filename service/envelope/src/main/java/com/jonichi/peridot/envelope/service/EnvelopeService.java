@@ -53,6 +53,20 @@ public interface EnvelopeService {
             Boolean recurring
     );
 
+    /**
+     * Retrieves a paginated list of envelopes for a given budget.
+     *
+     * <p>This method fetches envelopes associated with the specified budget ID, supporting
+     * pagination and sorting.</p>
+     *
+     * @param budgetId the ID of the budget to retrieve envelopes for
+     * @param page the page number to retrieve (starting from 0)
+     * @param size the number of items per page
+     * @param sortBy the field to sort the results by
+     * @param sortDirection the direction to sort the results (either "asc" for ascending or
+     *     "desc" for descending)
+     * @return a paginated list of envelope data transfer objects (DTOs)
+     */
     PeridotPagination<EnvelopeDataDTO> getEnvelopes(
             Integer budgetId,
             Integer page,

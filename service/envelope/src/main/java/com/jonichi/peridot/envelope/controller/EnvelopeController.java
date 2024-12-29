@@ -115,6 +115,20 @@ public class EnvelopeController {
         return ResponseEntity.status(status).body(response);
     }
 
+    /**
+     * Retrieves a paginated list of envelopes for a given budget.
+     *
+     * <p>This method fetches envelopes associated with the specified budget ID. It supports
+     * pagination and sorting options.</p>
+     *
+     * @param budgetId the unique identifier of the budget whose envelopes are to be retrieved.
+     * @param page the page number for pagination (optional).
+     * @param size the number of items per page for pagination (optional).
+     * @param sortBy the field to sort the envelopes by (optional).
+     * @param sortDirection the direction of sorting, either 'asc' or 'desc' (optional).
+     * @return a {@link ResponseEntity} containing an {@link ApiResponse} with paginated envelope
+     *     data as {@link PeridotPagination}.
+     */
     @GetMapping("/{budgetId}")
     public ResponseEntity<ApiResponse<PeridotPagination<EnvelopeDataDTO>>> getEnvelopes(
             @PathVariable Integer budgetId,
