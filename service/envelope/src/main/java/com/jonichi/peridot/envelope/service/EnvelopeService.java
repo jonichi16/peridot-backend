@@ -1,6 +1,8 @@
 package com.jonichi.peridot.envelope.service;
 
+import com.jonichi.peridot.envelope.dto.EnvelopeDataDTO;
 import com.jonichi.peridot.envelope.dto.EnvelopeResponseDTO;
+import com.jonichi.peridot.envelope.dto.PeridotPagination;
 import java.math.BigDecimal;
 
 /**
@@ -49,5 +51,13 @@ public interface EnvelopeService {
             String description,
             BigDecimal amount,
             Boolean recurring
+    );
+
+    PeridotPagination<EnvelopeDataDTO> getEnvelopes(
+            Integer budgetId,
+            Integer page,
+            Integer size,
+            String sortBy,
+            String sortDirection
     );
 }

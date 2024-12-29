@@ -3,7 +3,9 @@ package com.jonichi.peridot.envelope.controller;
 import com.jonichi.peridot.common.dto.ApiResponse;
 import com.jonichi.peridot.common.dto.SuccessResponse;
 import com.jonichi.peridot.envelope.dto.CreateUpdateEnvelopeDTO;
+import com.jonichi.peridot.envelope.dto.EnvelopeDataDTO;
 import com.jonichi.peridot.envelope.dto.EnvelopeResponseDTO;
+import com.jonichi.peridot.envelope.dto.PeridotPagination;
 import com.jonichi.peridot.envelope.service.EnvelopeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -113,8 +116,43 @@ public class EnvelopeController {
     }
 
     @GetMapping("/{budgetId}")
-    public ResponseEntity<?> getEnvelopes() {
-        return ResponseEntity.status(HttpStatus.OK).build();
+    public ResponseEntity<ApiResponse<PeridotPagination<EnvelopeDataDTO>>> getEnvelopes(
+            @PathVariable Integer budgetId,
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size,
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(required = false) String sortDirection
+    ) {
+        logger.info("Start - Controller - getEnvelopes");
+        logger.debug("""
+                PathVariable: {}
+                RequestParam: page={}, size={}, sortBy={}, sortDirection={}
+                """,
+                budgetId,
+                page,
+                size,
+                sortBy,
+                sortDirection
+        );
+
+        PeridotPagination<EnvelopeDataDTO> peridotPagination = envelopeService.getEnvelopes(
+                budgetId,
+                page,
+                size,
+                sortBy,
+                sortDirection
+        );
+
+        HttpStatus status = HttpStatus.OK;
+        ApiResponse<PeridotPagination<EnvelopeDataDTO>> response = SuccessResponse
+                .<PeridotPagination<EnvelopeDataDTO>>builder()
+                .code(status.value())
+                .message("List of envelopes retrieved successfully")
+                .data(peridotPagination)
+                .build();
+
+        logger.info("End - Controller - getEnvelopes");
+        return ResponseEntity.status(status).body(response);
     }
 
 }

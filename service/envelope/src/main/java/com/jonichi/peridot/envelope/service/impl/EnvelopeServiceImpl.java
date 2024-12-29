@@ -6,7 +6,9 @@ import com.jonichi.peridot.common.exception.PeridotDuplicateException;
 import com.jonichi.peridot.common.exception.PeridotNotFoundException;
 import com.jonichi.peridot.common.model.SystemStatus;
 import com.jonichi.peridot.common.util.TransactionalHandler;
+import com.jonichi.peridot.envelope.dto.EnvelopeDataDTO;
 import com.jonichi.peridot.envelope.dto.EnvelopeResponseDTO;
+import com.jonichi.peridot.envelope.dto.PeridotPagination;
 import com.jonichi.peridot.envelope.model.BudgetEnvelope;
 import com.jonichi.peridot.envelope.model.BudgetEnvelopeStatus;
 import com.jonichi.peridot.envelope.model.Envelope;
@@ -147,5 +149,16 @@ public class EnvelopeServiceImpl implements EnvelopeService {
             logger.info("End - Service - updateEnvelope");
         }
 
+    }
+
+    @Override
+    public PeridotPagination<EnvelopeDataDTO> getEnvelopes(
+            Integer budgetId,
+            Integer page,
+            Integer size,
+            String sortBy,
+            String sortDirection
+    ) {
+        return null;
     }
 }
