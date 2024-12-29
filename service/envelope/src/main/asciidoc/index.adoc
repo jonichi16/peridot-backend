@@ -46,3 +46,24 @@ include::{snippets}/updateEnvelopesMissingFields/response-body.adoc[]
 
 * Invalid Request:
 include::{snippets}/updateEnvelopeInvalidRequest/response-body.adoc[]
+
+'''
+
+=== Get List of Envelopes
+`GET /api/envelopes/{budgetId}`
+
+Retrieved list of envelopes for the current budget.
+
+==== Request Params
+
+[listing,subs="quotes"]
+----
+Integer *page* the page number for pagination (optional).
+Integer *size* the number of items per page for pagination (optional).
+String *sortBy* the field to sort the envelopes by (optional).
+String *sortDirection* the direction of sorting, either 'asc' or 'desc' (optional).
+----
+
+==== Success Response
+
+include::{snippets}/getEnvelopes/response-body.adoc[]
