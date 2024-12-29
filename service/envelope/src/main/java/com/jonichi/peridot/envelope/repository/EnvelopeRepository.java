@@ -1,7 +1,9 @@
 package com.jonichi.peridot.envelope.repository;
 
 import com.jonichi.peridot.envelope.model.Envelope;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -15,8 +17,15 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EnvelopeRepository extends JpaRepository<Envelope, Integer> {
 
+    @Transactional
+    @Modifying
     @Query("""
-            SELECT 1
+            UPDATE Envelope e
+            SET
+                e.name = :name,
+                e.description = :description,
+                e.updatedDate = CURRENT_TIMESTAMP
+            WHERE e.id = :envelopeId
             """)
     Integer updateEnvelope(
             Integer envelopeId,

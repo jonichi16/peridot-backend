@@ -154,12 +154,10 @@ public class BudgetEnvelopeRepositoryTest {
         assertThat(totalExpenses).isEqualTo(new BigDecimal("1500.00"));
     }
 
-//    @Test
-    public void updateEnvelope_shouldUpdateAnBudgetEnvelope() throws Exception {
+    @Test
+    public void updateBudgetEnvelope_shouldUpdateAnBudgetEnvelope() throws Exception {
         // given
-        Integer budgetEnvelopeId = 1;
-        String name = "New Name";
-        String description = "New Description";
+        Integer budgetEnvelopeId = budgetEnvelopeRepository.findAll().getFirst().getId();
         BigDecimal amount = BigDecimal.valueOf(1200);
 
         // when
@@ -167,6 +165,24 @@ public class BudgetEnvelopeRepositoryTest {
                 budgetEnvelopeId,
                 amount,
                 false
+        );
+
+        // then
+        assertThat(updated).isEqualTo(1);
+    }
+
+    @Test
+    public void updateEnvelope_shouldUpdateEnvelope() throws Exception {
+        // given
+        Integer envelopeId = envelopeRepository.findAll().getFirst().getId();
+        String name = "New name";
+        String description = "New description";
+
+        // when
+        Integer updated = envelopeRepository.updateEnvelope(
+                envelopeId,
+                name,
+                description
         );
 
         // then
