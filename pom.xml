@@ -44,7 +44,7 @@
 		<spotbugs-maven-plugin.version>4.8.6.6</spotbugs-maven-plugin.version>
 		<spotbugs.version>4.8.6</spotbugs.version>
 		<maven-pmd-plugin.version>3.26.0</maven-pmd-plugin.version>
-		<jjwt-version>0.11.5</jjwt-version>
+		<jjwt-version>0.12.6</jjwt-version>
 		<commons-compress.version>1.27.1</commons-compress.version>
 	</properties>
 	<dependencies>
