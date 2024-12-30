@@ -8,13 +8,12 @@ concurrency:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Send discord in_progress notification
+      - name: Send Discord in-progress notification
         run: |
           curl -H "Content-Type: application/json" -X POST -d '{
             "username": "Bob",
@@ -33,7 +32,7 @@ jobs:
                 "fields": [
                   {
                     "name": "Description",
-                    "value": "${{ github.event.pull_request.body || '\n' }}",
+                    "value": "${{ github.event.pull_request.user.login == 'dependabot[bot]' && github.event.pull_request.title || github.event.pull_request.body || '\n' }}",
                     "inline": "false"
                   },
                   {
@@ -43,7 +42,7 @@ jobs:
                   },
                   {
                     "name": "Author",
-                    "value": "${{ github.actor }}",
+                    "value": "${{ github.event.pull_request.user.login }}",
                     "inline": "true"
                   },
                   {
@@ -74,17 +73,8 @@ jobs:
           chmod +x ./run
           ./run lint
 
-      # TODO: add dependabot
-
-  result:
-    runs-on: ubuntu-latest
-    needs: [ build ]
-    if: ${{ always() }}
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Send discord success notification
-        if: ${{ needs.build.result == 'success' }}
+      - name: Send Discord success notification
+        if: ${{ success() }}
         run: |
           curl -H "Content-Type: application/json" -X POST -d '{
             "username": "Bob",
@@ -103,7 +93,7 @@ jobs:
                 "fields": [
                   {
                     "name": "Description",
-                    "value": "${{ github.event.pull_request.body || '\n' }}",
+                    "value": "${{ github.event.pull_request.user.login == 'dependabot[bot]' && github.event.pull_request.title || github.event.pull_request.body || '\n' }}",
                     "inline": "false"
                   },
                   {
@@ -113,7 +103,7 @@ jobs:
                   },
                   {
                     "name": "Author",
-                    "value": "${{ github.actor }}",
+                    "value": "${{ github.event.pull_request.user.login }}",
                     "inline": "true"
                   },
                   {
@@ -125,10 +115,9 @@ jobs:
               }
             ]
           }' ${{ secrets.WEBHOOK_URL }}
-          echo "${{ toJson(needs) }}"
 
-      - name: Send discord failed notification
-        if: ${{ needs.build.result == 'failure' }}
+      - name: Send Discord failed notification
+        if: ${{ failure() }}
         run: |
           curl -H "Content-Type: application/json" -X POST -d '{
             "username": "Bob",
@@ -147,7 +136,7 @@ jobs:
                 "fields": [
                   {
                     "name": "Description",
-                    "value": "${{ github.event.pull_request.body || '\n' }}",
+                    "value": "${{ github.event.pull_request.user.login == 'dependabot[bot]' && github.event.pull_request.title || github.event.pull_request.body || '\n' }}",
                     "inline": "false"
                   },
                   {
@@ -157,7 +146,7 @@ jobs:
                   },
                   {
                     "name": "Author",
-                    "value": "${{ github.actor }}",
+                    "value": "${{ github.event.pull_request.user.login }}",
                     "inline": "true"
                   },
                   {
@@ -169,4 +158,3 @@ jobs:
               }
             ]
           }' ${{ secrets.WEBHOOK_URL }}
-          echo "${{ toJson(needs) }}"
