@@ -1,0 +1,11 @@
+version: 2
+updates:
+  - package-ecosystem: "maven"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: "17:00"
+    target-branch: "dev"
+    open-pull-requests-limit: 10
+    pull-request-branch-name:
+      separator: "-"
