@@ -5,6 +5,7 @@ import com.jonichi.peridot.budget.model.Budget;
 import com.jonichi.peridot.budget.model.BudgetStatus;
 import com.jonichi.peridot.budget.repository.BudgetRepository;
 import com.jonichi.peridot.common.dto.UserBudgetDTO;
+import com.jonichi.peridot.common.util.DateUtil;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
@@ -13,6 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -43,16 +46,20 @@ public class BudgetContextServiceImplTest {
                 .status(BudgetStatus.BUDGET_STATUS_INCOMPLETE)
                 .build();
 
-        // when
-        when(authContextService.getUserId()).thenReturn(1);
-        when(budgetRepository.getCurrentBudget(userId, period)).thenReturn(Optional.of(budget));
-        UserBudgetDTO userBudgetDTO = budgetContextService.getCurrentUserBudgetId();
+        try (MockedStatic<DateUtil> mockedDateUtil = Mockito.mockStatic(DateUtil.class)) {
+            // when
+            when(authContextService.getUserId()).thenReturn(userId);
+            mockedDateUtil.when(DateUtil::getCurrentPeriod).thenReturn(period);
+            when(budgetRepository.getCurrentBudget(userId, period)).thenReturn(Optional.of(budget));
 
-        // then
-        verify(authContextService, times(1)).getUserId();
-        verify(budgetRepository, times(1)).getCurrentBudget(userId, period);
-        assertThat(userBudgetDTO.userId()).isEqualTo(1);
-        assertThat(userBudgetDTO.budgetId()).isEqualTo(1);
+            UserBudgetDTO userBudgetDTO = budgetContextService.getCurrentUserBudgetId();
+
+            // then
+            verify(authContextService, times(1)).getUserId();
+            verify(budgetRepository, times(1)).getCurrentBudget(userId, period);
+            assertThat(userBudgetDTO.userId()).isEqualTo(1);
+            assertThat(userBudgetDTO.budgetId()).isEqualTo(1);
+        }
     }
 
     @Test
