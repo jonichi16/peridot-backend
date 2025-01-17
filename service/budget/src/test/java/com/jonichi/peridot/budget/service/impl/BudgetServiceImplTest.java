@@ -21,6 +21,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -171,22 +173,25 @@ public class BudgetServiceImplTest {
                 .status(BudgetStatus.BUDGET_STATUS_INCOMPLETE)
                 .build();
 
-        // when
-        when(authContextService.getUserId()).thenReturn(1);
-        doAnswer(invocation -> {
-            Runnable action = invocation.getArgument(0);
-            action.run();
-            return null;
-        }).when(transactionalHandler).runInTransaction(any(Runnable.class));
-        when(budgetRepository.getCurrentBudget(1, period)).thenReturn(Optional.of(budget));
-        BudgetResponseDTO budgetResponseDTO = budgetService.updateCurrentBudget(amount);
+        try (MockedStatic<DateUtil> mockedDatedUtil = Mockito.mockStatic(DateUtil.class)) {
+            // when
+            when(authContextService.getUserId()).thenReturn(1);
+            mockedDatedUtil.when(DateUtil::getCurrentPeriod).thenReturn(period);
+            doAnswer(invocation -> {
+                Runnable action = invocation.getArgument(0);
+                action.run();
+                return null;
+            }).when(transactionalHandler).runInTransaction(any(Runnable.class));
+            when(budgetRepository.getCurrentBudget(1, period)).thenReturn(Optional.of(budget));
+            BudgetResponseDTO budgetResponseDTO = budgetService.updateCurrentBudget(amount);
 
-        // then
-        verify(authContextService, times(1)).getUserId();
-        verify(transactionalHandler, times(1)).runInTransaction(any(Runnable.class));
-        verify(budgetRepository, times(1)).updateCurrentBudget(1, period, amount);
-        verify(budgetRepository, times(1)).getCurrentBudget(1, period);
-        assertThat(budgetResponseDTO.budgetId()).isEqualTo(1);
+            // then
+            verify(authContextService, times(1)).getUserId();
+            verify(transactionalHandler, times(1)).runInTransaction(any(Runnable.class));
+            verify(budgetRepository, times(1)).updateCurrentBudget(1, period, amount);
+            verify(budgetRepository, times(1)).getCurrentBudget(1, period);
+            assertThat(budgetResponseDTO.budgetId()).isEqualTo(1);
+        }
     }
 
 }
